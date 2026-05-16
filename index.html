@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>个人AI作品集</title>
+  <title>陈梓键 · 英语家教简历</title>
   <style>
     * {
       margin: 0;
@@ -39,7 +39,7 @@
       -webkit-backdrop-filter: blur(20px);
       border-radius: 2.5rem;
       padding: 3rem 2.5rem;
-      max-width: 700px;
+      max-width: 800px;
       width: 90%;
       box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
       color: #fff;
@@ -107,14 +107,14 @@
       50% { opacity: 0; }
     }
 
-    .projects {
+    .info-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1.2rem;
       margin-top: 1rem;
     }
 
-    .project-item {
+    .info-item {
       background: rgba(255, 255, 255, 0.05);
       padding: 1.2rem;
       border-radius: 1.2rem;
@@ -122,40 +122,75 @@
       border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    .project-item:hover {
+    .info-item:hover {
       background: rgba(255, 255, 255, 0.1);
       transform: scale(1.02);
       border-color: rgba(255, 255, 255, 0.2);
     }
 
-    .project-item h3 {
+    .info-item h3 {
       font-size: 1.3rem;
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.6rem;
+      color: #e0e7ff;
     }
 
-    .project-item p {
+    .info-item p,
+    .info-item li {
       color: #cbd5e1;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
+      line-height: 1.6;
     }
 
-    .footer {
-      text-align: center;
-      margin-top: 2.5rem;
-      font-size: 0.9rem;
-      color: #94a3b8;
+    .info-item ul {
+      list-style-type: none;
+      padding-left: 0;
     }
 
-    .footer a {
+    .info-item ul li::before {
+      content: "•";
+      color: #a5b4fc;
+      margin-right: 0.5rem;
+    }
+
+    .contact-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 2rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 1.2rem;
+      padding: 1.2rem;
+      font-size: 0.95rem;
+      color: #cbd5e1;
+    }
+
+    .contact-row span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .contact-row a {
       color: #a5b4fc;
       text-decoration: none;
     }
 
+    .footer {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #94a3b8;
+    }
+
     @media (max-width: 600px) {
-      .projects {
+      .info-grid {
         grid-template-columns: 1fr;
       }
       .card {
         padding: 2rem 1.5rem;
+      }
+      .contact-row {
+        flex-direction: column;
       }
     }
   </style>
@@ -164,35 +199,73 @@
   <canvas id="starsCanvas"></canvas>
 
   <div class="card">
-    <div class="avatar">🤖</div>
-    <h1>AI 探索者</h1>
-    <div class="subtitle">机器学习 · 自然语言处理 · 创意生成</div>
+    <div class="avatar">📚</div>
+    <h1>陈梓键</h1>
+    <div class="subtitle">深圳 · 东莞 · 线上 | 英语家教 · 高考英语144分 · 听说19/20</div>
 
     <div class="typing-box">
       <span id="typingText" class="cursor"></span>
     </div>
 
-    <div class="projects">
-      <div class="project-item">
-        <h3>🧠 智能对话助手</h3>
-        <p>基于Transformer的上下文理解引擎</p>
+    <div class="info-grid">
+      <!-- 个人简介 -->
+      <div class="info-item" style="grid-column: span 2;">
+        <h3>🧑‍🎓 个人简介</h3>
+        <p>深圳技术大学2025级大一新生，高考英语成绩优异（144/150）。拥有一个月正式家教经验并获得学生与家长的高度好评。性格开朗，教学有耐心，旨在通过聚焦英语的底层逻辑、培养可持续的学习习惯来破除英语学习的误区，而非单纯的知识灌输。致力于帮助学生建立自信并取得切实的学业进步。</p>
       </div>
-      <div class="project-item">
-        <h3>🎨 图像风格迁移</h3>
-        <p>神经风格转换与实时渲染</p>
+
+      <!-- 教育背景 -->
+      <div class="info-item">
+        <h3>🎓 教育背景</h3>
+        <p><strong>深圳技术大学</strong><br>智能感知工程专业 学士（预计2029年毕业）</p>
+        <p style="margin-top:0.8rem;"><strong>广东省高考（2025年）</strong><br>· 英语：144分（满分150）<br>· 英语听说：19分（满分20）</p>
       </div>
-      <div class="project-item">
-        <h3>📊 数据分析AI</h3>
-        <p>自动化洞察与可视化生成</p>
+
+      <!-- 家教经历 -->
+      <div class="info-item">
+        <h3>💼 家教经历</h3>
+        <p><strong>英语家教老师 | 东莞</strong><br>2025年7月（全职）</p>
+        <ul style="margin-top:0.5rem;">
+          <li>辅导4名八年级学生，重点巩固语法、扩展词汇和提高阅读理解能力</li>
+          <li>根据学习风格制定个性化教学计划</li>
+          <li>因教学生动有趣、极具耐心且效果显著，获得学生和家长高度好评</li>
+          <li>注重讲解语法和词汇背后的逻辑，帮助学生从死记硬背转向真正理解</li>
+        </ul>
       </div>
-      <div class="project-item">
-        <h3>✍️ 创意写作模型</h3>
-        <p>多体裁内容生成与润色</p>
+
+      <!-- 教学理念 -->
+      <div class="info-item">
+        <h3>🧠 教学理念与方法</h3>
+        <ul>
+          <li><strong>重逻辑非填鸭：</strong>揭示英语内在规律，使学习直观且持久</li>
+          <li><strong>习惯养成：</strong>培养每日阅读、主动使用词汇等高效习惯</li>
+          <li><strong>应试技巧精通：</strong>提供时间管理、题型分析、避错技巧等实用策略</li>
+          <li><strong>互动与灵活：</strong>运用多种教学资源，保持课堂活力并灵活调整</li>
+        </ul>
+      </div>
+
+      <!-- 技能与优势 -->
+      <div class="info-item">
+        <h3>⭐ 技能与优势</h3>
+        <ul>
+          <li>粤语、普通话母语，英语流利，无缝沟通</li>
+          <li>2025届高考高分应届生，熟悉最新考试形式与技巧</li>
+          <li>性格外向开朗，有耐心，善于鼓励</li>
+          <li>拥有成体系的英语学习方法和考试技巧可直接传授</li>
+        </ul>
       </div>
     </div>
 
+    <!-- 联系方式 -->
+    <div class="contact-row">
+      <span>📞 13528680237</span>
+      <span>📧 <a href="mailto:1624047838@qq.com">1624047838@qq.com</a></span>
+      <span>📍 广东深圳（可深圳、东莞线下或线上）</span>
+      <span>🗣️ 普通话 / 粤语 / English</span>
+    </div>
+
     <div class="footer">
-      🌐 持续更新中 · <a href="#">GitHub</a> · <a href="#">联系我</a>
+      ✨ 期待与您一起开启英语学习的新篇章
     </div>
   </div>
 
@@ -234,7 +307,6 @@
           ctx.beginPath();
           ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
           ctx.fill();
-          // 闪烁
           s.alpha += s.delta;
           if (s.alpha > 0.9 || s.alpha < 0.2) s.delta = -s.delta;
         }
@@ -249,10 +321,10 @@
       // 打字机效果
       const textElement = document.getElementById('typingText');
       const phrases = [
-        '用代码构建智能的未来。',
-        '让机器理解人类语言。',
-        '探索生成式AI的无限可能。',
-        '数据驱动，创意无界。'
+        '语言是思维的外壳，我帮你找到打开它的钥匙。',
+        '英语不是死记硬背，而是逻辑与习惯的共鸣。',
+        '从高考144分到你的高分，我陪你走最短的路。',
+        '深圳 / 东莞，线下或线上，我们一起让进步发生。'
       ];
       let phraseIndex = 0;
       let charIndex = 0;
@@ -275,7 +347,7 @@
         let typeSpeed = isDeleting ? 40 : 80;
 
         if (!isDeleting && charIndex === fullPhrase.length) {
-          typeSpeed = 1500; // 打完停一会
+          typeSpeed = 1500;
           isDeleting = true;
         } else if (isDeleting && charIndex === 0) {
           isDeleting = false;
@@ -286,7 +358,6 @@
         setTimeout(typeEffect, typeSpeed);
       }
 
-      // 确保初始文本为空，加上光标类
       textElement.textContent = '';
       textElement.classList.add('cursor');
       setTimeout(typeEffect, 500);
