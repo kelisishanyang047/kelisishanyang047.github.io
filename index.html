@@ -1,367 +1,668 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>陈梓键 · 英语家教简历</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>霓虹都市 · 个人简历</title>
+    <style>
+        :root {
+            --bg-deep: #1a0033;
+            --bg-card: rgba(20, 5, 40, 0.85);
+            --neon-pink: #ff007f;
+            --neon-blue: #0080ff;
+            --neon-yellow: #ffe600;
+            --neon-purple: #b44dff;
+            --text-primary: #f0e6ff;
+            --text-secondary: #c9b0e8;
+            --glow-strong: 0 0 20px;
+            --glow-medium: 0 0 12px;
+        }
 
-    body {
-      background: #0a0a1a;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-      overflow-x: hidden;
-      position: relative;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-    }
+        body {
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            position: relative;
+        }
 
-    .card {
-      position: relative;
-      z-index: 10;
-      background: rgba(20, 20, 40, 0.6);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 2.5rem;
-      padding: 3rem 2.5rem;
-      max-width: 800px;
-      width: 90%;
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
-      color: #fff;
-      transition: transform 0.3s ease;
-      margin: 2rem 0;
-    }
+        /* Canvas 粒子背景 */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
 
-    .card:hover {
-      transform: translateY(-5px);
-    }
+        /* 主容器 */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
 
-    .avatar {
-      width: 100px;
-      height: 100px;
-      background: linear-gradient(135deg, #4f46e5, #7c3aed);
-      border-radius: 50%;
-      margin: 0 auto 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.8rem;
-      box-shadow: 0 0 30px rgba(124, 58, 237, 0.4);
-    }
+        /* ---- 头部区域 ---- */
+        .hero {
+            text-align: center;
+            padding: 3rem 1rem 1rem;
+            background: radial-gradient(circle at center, rgba(255, 0, 127, 0.15) 0%, transparent 70%);
+            border-radius: 20px;
+            position: relative;
+        }
 
-    h1 {
-      text-align: center;
-      font-size: 2.5rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      letter-spacing: 2px;
-    }
+        .hero h1 {
+            font-size: 3.2rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--neon-pink), var(--neon-blue), var(--neon-yellow));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 2px;
+            margin-bottom: 0.8rem;
+            text-shadow: 0 0 30px rgba(255, 0, 127, 0.6);
+            animation: glow-pulse 2s infinite alternate;
+        }
 
-    .subtitle {
-      text-align: center;
-      color: #a5b4fc;
-      font-size: 1.1rem;
-      margin-bottom: 2rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      padding-bottom: 1.5rem;
-    }
+        @keyframes glow-pulse {
+            from { filter: drop-shadow(0 0 10px var(--neon-pink)); }
+            to { filter: drop-shadow(0 0 25px var(--neon-blue)); }
+        }
 
-    .typing-box {
-      background: rgba(0, 0, 0, 0.35);
-      border-radius: 1.5rem;
-      padding: 1.5rem 1.8rem;
-      margin: 1.5rem 0 2rem;
-      font-family: 'JetBrains Mono', 'Fira Code', monospace;
-      font-size: 1.1rem;
-      color: #e0e7ff;
-      border-left: 4px solid #818cf8;
-      min-height: 70px;
-      display: flex;
-      align-items: center;
-      word-break: break-word;
-    }
+        .hero .subtitle {
+            font-size: 1.3rem;
+            color: var(--neon-yellow);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 12px rgba(255, 230, 0, 0.7);
+        }
 
-    .cursor::after {
-      content: '|';
-      color: #c4b5fd;
-      animation: blink 1s step-end infinite;
-      margin-left: 2px;
-    }
+        .hero .tagline {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
 
-    @keyframes blink {
-      50% { opacity: 0; }
-    }
+        /* ---- 通用卡片样式 ---- */
+        .section {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
 
-    .info-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.2rem;
-      margin-top: 1rem;
-    }
+        /* 不同边框样式 — 避免千篇一律 */
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 16px;
+            padding: 2px;
+            background: linear-gradient(135deg, var(--neon-pink), var(--neon-blue));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
 
-    .info-item {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 1.2rem;
-      border-radius: 1.2rem;
-      transition: background 0.3s, transform 0.2s;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
+        /* 自定义边框样式 - 使用不同伪元素组合 */
+        .section.education::before {
+            background: linear-gradient(45deg, var(--neon-yellow), var(--neon-pink));
+            opacity: 0.7;
+        }
 
-    .info-item:hover {
-      background: rgba(255, 255, 255, 0.1);
-      transform: scale(1.02);
-      border-color: rgba(255, 255, 255, 0.2);
-    }
+        .section.experience::before {
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            opacity: 0.8;
+        }
 
-    .info-item h3 {
-      font-size: 1.3rem;
-      margin-bottom: 0.6rem;
-      color: #e0e7ff;
-    }
+        .section.projects::before {
+            background: repeating-linear-gradient(45deg, var(--neon-pink) 0px, var(--neon-pink) 5px, transparent 5px, transparent 10px);
+            opacity: 0.4;
+        }
 
-    .info-item p,
-    .info-item li {
-      color: #cbd5e1;
-      font-size: 0.95rem;
-      line-height: 1.6;
-    }
+        .section.skills::before {
+            background: linear-gradient(270deg, var(--neon-yellow), var(--neon-blue));
+            opacity: 0.6;
+        }
 
-    .info-item ul {
-      list-style-type: none;
-      padding-left: 0;
-    }
+        .section.publications::before {
+            background: linear-gradient(160deg, var(--neon-purple), var(--neon-pink));
+            opacity: 0.7;
+        }
 
-    .info-item ul li::before {
-      content: "•";
-      color: #a5b4fc;
-      margin-right: 0.5rem;
-    }
+        .section.contact::before {
+            background: conic-gradient(from 90deg at 50% 50%, var(--neon-pink), var(--neon-yellow), var(--neon-blue), var(--neon-pink));
+            opacity: 0.5;
+        }
 
-    .contact-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin-top: 2rem;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 1.2rem;
-      padding: 1.2rem;
-      font-size: 0.95rem;
-      color: #cbd5e1;
-    }
+        /* 悬停时增强发光 */
+        .section:hover {
+            box-shadow: 0 0 30px rgba(255, 0, 127, 0.3), 0 0 60px rgba(0, 128, 255, 0.2);
+            transform: translateY(-3px);
+        }
 
-    .contact-row span {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-    }
+        .section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--neon-yellow);
+            text-shadow: 0 0 8px rgba(255, 230, 0, 0.6);
+            border-bottom: 2px solid rgba(255, 230, 0, 0.4);
+            padding-bottom: 0.5rem;
+        }
 
-    .contact-row a {
-      color: #a5b4fc;
-      text-decoration: none;
-    }
+        /* 列表与内容 */
+        .item {
+            margin-bottom: 1.8rem;
+            padding-left: 1rem;
+            border-left: 3px solid var(--neon-pink);
+            transition: border-color 0.3s;
+        }
 
-    .footer {
-      text-align: center;
-      margin-top: 2rem;
-      font-size: 0.9rem;
-      color: #94a3b8;
-    }
+        .item:hover {
+            border-left-color: var(--neon-blue);
+        }
 
-    @media (max-width: 600px) {
-      .info-grid {
-        grid-template-columns: 1fr;
-      }
-      .card {
-        padding: 2rem 1.5rem;
-      }
-      .contact-row {
-        flex-direction: column;
-      }
-    }
-  </style>
+        .item:last-child {
+            margin-bottom: 0;
+        }
+
+        .item h3 {
+            color: var(--neon-blue);
+            font-size: 1.3rem;
+            margin-bottom: 0.2rem;
+            text-shadow: 0 0 5px rgba(0, 128, 255, 0.5);
+        }
+
+        .item .meta {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .item p, .item ul {
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        ul li::before {
+            content: '▹';
+            color: var(--neon-yellow);
+            margin-right: 0.6rem;
+            font-size: 1rem;
+        }
+
+        /* 技能标签 */
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .tag {
+            background: rgba(255, 0, 127, 0.15);
+            border: 1px solid var(--neon-pink);
+            color: var(--neon-pink);
+            padding: 0.4rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            cursor: default;
+            text-shadow: 0 0 5px currentColor;
+            box-shadow: 0 0 8px rgba(255, 0, 127, 0.4);
+        }
+
+        .tag:hover {
+            background: var(--neon-pink);
+            color: white;
+            box-shadow: 0 0 20px var(--neon-pink);
+            transform: scale(1.05);
+        }
+
+        /* 链接通用样式 */
+        a {
+            color: var(--neon-blue);
+            text-decoration: none;
+            position: relative;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-shadow: 0 0 6px rgba(0, 128, 255, 0.5);
+        }
+
+        a:hover {
+            color: var(--neon-yellow);
+            text-shadow: 0 0 12px var(--neon-yellow);
+        }
+
+        a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--neon-pink);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+
+        a:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        /* 邮箱与社交链接特殊样式 */
+        .contact-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.8rem;
+            margin-top: 1rem;
+            justify-content: center;
+        }
+
+        .contact-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            border-image-slice: 1;
+        }
+
+        .contact-link.email {
+            border-color: var(--neon-pink);
+            color: var(--neon-pink);
+        }
+        .contact-link.website {
+            border-color: var(--neon-blue);
+            color: var(--neon-blue);
+        }
+        .contact-link.linkedin {
+            border-color: var(--neon-yellow);
+            color: var(--neon-yellow);
+        }
+
+        .contact-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 15px currentColor;
+            transform: translateY(-2px);
+        }
+
+        .contact-link.email:hover { box-shadow: 0 0 20px var(--neon-pink); }
+        .contact-link.website:hover { box-shadow: 0 0 20px var(--neon-blue); }
+        .contact-link.linkedin:hover { box-shadow: 0 0 20px var(--neon-yellow); }
+
+        /* 期刊链接特殊样式 */
+        .pub-link {
+            display: inline-block;
+            margin-top: 0.3rem;
+            background: rgba(180, 77, 255, 0.2);
+            border: 1px dashed var(--neon-purple);
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+        .pub-link:hover {
+            background: var(--neon-purple);
+            color: white;
+            border-style: solid;
+            box-shadow: 0 0 12px var(--neon-purple);
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+                gap: 2rem;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .section {
+                padding: 1.5rem;
+            }
+
+            .contact-links {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* 粒子画布鼠标交互提示 */
+        .mouse-hint {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.8rem;
+            z-index: 2;
+            pointer-events: none;
+        }
+    </style>
 </head>
 <body>
-  <canvas id="starsCanvas"></canvas>
+    <canvas id="particle-canvas"></canvas>
 
-  <div class="card">
-    <div class="avatar">📚</div>
-    <h1>陈梓键</h1>
-    <div class="subtitle">深圳 · 东莞 · 线上 | 英语家教 · 高考英语144分 · 听说19/20</div>
+    <div class="container">
+        <!-- 头部 -->
+        <header class="hero">
+            <h1>Alex Chen</h1>
+            <div class="subtitle">全栈开发 · AI 研究者</div>
+            <p class="tagline">
+                热衷于构建数字世界与智能系统，探索代码与创造力的交汇点。
+            </p>
+        </header>
 
-    <div class="typing-box">
-      <span id="typingText" class="cursor"></span>
+        <!-- 教育经历 -->
+        <section class="section education">
+            <h2>📚 教育经历</h2>
+            <div class="item">
+                <h3>计算机科学与技术 硕士</h3>
+                <div class="meta">城市科技大学 · 2022 - 2025</div>
+                <p>研究方向：大规模语言模型对齐与可解释性。GPA 3.9/4.0，获校级优秀毕业论文。</p>
+            </div>
+            <div class="item">
+                <h3>软件工程 学士</h3>
+                <div class="meta">国立信息大学 · 2018 - 2022</div>
+                <p>核心课程：数据结构、算法设计、操作系统。毕业设计获“最佳创新奖”。</p>
+            </div>
+        </section>
+
+        <!-- 工作/项目经历 -->
+        <section class="section experience">
+            <h2>💼 工作经历</h2>
+            <div class="item">
+                <h3>前端架构师 · 星河科技</h3>
+                <div class="meta">2023.06 - 至今</div>
+                <ul>
+                    <li>主导设计新一代低代码平台前端架构，服务10万+开发者</li>
+                    <li>优化渲染性能，首屏加载时间降低40%</li>
+                    <li>引入 WebAssembly 处理计算密集型任务，效率提升3倍</li>
+                </ul>
+            </div>
+            <div class="item">
+                <h3>软件开发实习生 · 未来智能</h3>
+                <div class="meta">2022.07 - 2023.04</div>
+                <ul>
+                    <li>参与AI对话系统前端开发，实现流式响应与Markdown渲染</li>
+                    <li>基于 Vue3 构建组件库，单元测试覆盖率达85%</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 项目作品 -->
+        <section class="section projects">
+            <h2>🚀 精选项目</h2>
+            <div class="item">
+                <h3>Neural Canvas</h3>
+                <div class="meta">开源项目 · <a href="https://github.com/example/neural-canvas" target="_blank" rel="noopener">GitHub ↗</a></div>
+                <p>一个基于神经网络的交互式绘图工具，允许用户通过手势生成矢量图形。⭐ 2.3k Stars</p>
+            </div>
+            <div class="item">
+                <h3>CodeSync</h3>
+                <div class="meta">团队项目 · <a href="https://codesync.dev" target="_blank" rel="noopener">codesync.dev ↗</a></div>
+                <p>实时协作代码编辑器，支持多语言编译与视频会议。获得2024年黑客马拉松冠军。</p>
+            </div>
+        </section>
+
+        <!-- 技能标签 -->
+        <section class="section skills">
+            <h2>⚡ 技术栈</h2>
+            <div class="tag-cloud">
+                <span class="tag">JavaScript</span>
+                <span class="tag">TypeScript</span>
+                <span class="tag">React</span>
+                <span class="tag">Vue</span>
+                <span class="tag">Node.js</span>
+                <span class="tag">Python</span>
+                <span class="tag">PyTorch</span>
+                <span class="tag">LangChain</span>
+                <span class="tag">Docker</span>
+                <span class="tag">AWS</span>
+            </div>
+        </section>
+
+        <!-- 发表文章/期刊 -->
+        <section class="section publications">
+            <h2>📄 学术发表</h2>
+            <div class="item">
+                <h3>Enhancing LLM Reasoning via Self-Critique Prompting</h3>
+                <div class="meta">ACL 2024 · 第一作者</div>
+                <p>提出一种自我批判提示框架，显著提升大模型在复杂推理任务上的表现。</p>
+                <a href="https://doi.org/10.1234/example.2024" target="_blank" rel="noopener" class="pub-link">📎 查看期刊</a>
+            </div>
+            <div class="item">
+                <h3>Lightweight Attention for Edge Devices</h3>
+                <div class="meta">NeurIPS 2023 Workshop · 合作者</div>
+                <p>设计移动端友好的注意力机制，降低70%内存占用，保持精度。</p>
+                <a href="https://neurips.cc/example" target="_blank" rel="noopener" class="pub-link">📎 查看期刊</a>
+            </div>
+        </section>
+
+        <!-- 联系方式 -->
+        <section class="section contact">
+            <h2>📬 联系我</h2>
+            <p style="text-align: center; margin-bottom: 1.5rem; color: var(--text-secondary);">
+                欢迎通过以下方式与我交流合作。
+            </p>
+            <div class="contact-links">
+                <a href="mailto:alex.chen@example.com" class="contact-link email">
+                    ✉️ alex.chen@example.com
+                </a>
+                <a href="https://alexchen.dev" target="_blank" rel="noopener" class="contact-link website">
+                    🌐 alexchen.dev
+                </a>
+                <a href="https://linkedin.com/in/alexchen" target="_blank" rel="noopener" class="contact-link linkedin">
+                    💼 LinkedIn
+                </a>
+            </div>
+        </section>
     </div>
 
-    <div class="info-grid">
-      <!-- 个人简介 -->
-      <div class="info-item" style="grid-column: span 2;">
-        <h3>🧑‍🎓 个人简介</h3>
-        <p>深圳技术大学2025级大一新生，高考英语成绩优异（144/150）。拥有一个月正式家教经验并获得学生与家长的高度好评。性格开朗，教学有耐心，旨在通过聚焦英语的底层逻辑、培养可持续的学习习惯来破除英语学习的误区，而非单纯的知识灌输。致力于帮助学生建立自信并取得切实的学业进步。</p>
-      </div>
+    <div class="mouse-hint">✨ 移动鼠标与粒子互动</div>
 
-      <!-- 教育背景 -->
-      <div class="info-item">
-        <h3>🎓 教育背景</h3>
-        <p><strong>深圳技术大学</strong><br>智能感知工程专业 学士（预计2029年毕业）</p>
-        <p style="margin-top:0.8rem;"><strong>广东省高考（2025年）</strong><br>· 英语：144分（满分150）<br>· 英语听说：19分（满分20）</p>
-      </div>
+    <script>
+        (function() {
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            let width, height;
+            let particles = [];
+            const mouse = { x: null, y: null, radius: 120 };
 
-      <!-- 家教经历 -->
-      <div class="info-item">
-        <h3>💼 家教经历</h3>
-        <p><strong>英语家教老师 | 东莞</strong><br>2025年7月（全职）</p>
-        <ul style="margin-top:0.5rem;">
-          <li>辅导4名八年级学生，重点巩固语法、扩展词汇和提高阅读理解能力</li>
-          <li>根据学习风格制定个性化教学计划</li>
-          <li>因教学生动有趣、极具耐心且效果显著，获得学生和家长高度好评</li>
-          <li>注重讲解语法和词汇背后的逻辑，帮助学生从死记硬背转向真正理解</li>
-        </ul>
-      </div>
+            // 霓虹颜色池
+            const colors = ['#ff007f', '#0080ff', '#ffe600', '#b44dff', '#ff3399', '#00ccff'];
 
-      <!-- 教学理念 -->
-      <div class="info-item">
-        <h3>🧠 教学理念与方法</h3>
-        <ul>
-          <li><strong>重逻辑非填鸭：</strong>揭示英语内在规律，使学习直观且持久</li>
-          <li><strong>习惯养成：</strong>培养每日阅读、主动使用词汇等高效习惯</li>
-          <li><strong>应试技巧精通：</strong>提供时间管理、题型分析、避错技巧等实用策略</li>
-          <li><strong>互动与灵活：</strong>运用多种教学资源，保持课堂活力并灵活调整</li>
-        </ul>
-      </div>
+            // 粒子类
+            class Particle {
+                constructor(x, y) {
+                    this.x = x || Math.random() * width;
+                    this.y = y || Math.random() * height;
+                    this.size = Math.random() * 2.5 + 1;
+                    this.speedX = (Math.random() - 0.5) * 1.5;
+                    this.speedY = (Math.random() - 0.5) * 1.5;
+                    this.color = colors[Math.floor(Math.random() * colors.length)];
+                    this.life = 1;
+                    this.decay = Math.random() * 0.02 + 0.005;
+                }
 
-      <!-- 技能与优势 -->
-      <div class="info-item">
-        <h3>⭐ 技能与优势</h3>
-        <ul>
-          <li>粤语、普通话母语，英语流利，无缝沟通</li>
-          <li>2025届高考高分应届生，熟悉最新考试形式与技巧</li>
-          <li>性格外向开朗，有耐心，善于鼓励</li>
-          <li>拥有成体系的英语学习方法和考试技巧可直接传授</li>
-        </ul>
-      </div>
-    </div>
+                update() {
+                    // 向鼠标位置轻微聚集
+                    if (mouse.x && mouse.y) {
+                        const dx = mouse.x - this.x;
+                        const dy = mouse.y - this.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < mouse.radius) {
+                            const force = (mouse.radius - dist) / mouse.radius;
+                            const angle = Math.atan2(dy, dx);
+                            this.speedX += Math.cos(angle) * force * 0.08;
+                            this.speedY += Math.sin(angle) * force * 0.08;
+                        }
+                    }
 
-    <!-- 联系方式 -->
-    <div class="contact-row">
-      <span>📞 13528680237</span>
-      <span>📧 <a href="mailto:1624047838@qq.com">1624047838@qq.com</a></span>
-      <span>📍 广东深圳（可深圳、东莞线下或线上）</span>
-      <span>🗣️ 普通话 / 粤语 / English</span>
-    </div>
+                    // 移动并逐渐消失
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    this.life -= this.decay;
 
-    <div class="footer">
-      ✨ 期待与您一起开启英语学习的新篇章
-    </div>
-  </div>
+                    // 边界限制并反弹
+                    if (this.x < 0 || this.x > width) this.speedX *= -0.8;
+                    if (this.y < 0 || this.y > height) this.speedY *= -0.8;
+                    this.x = Math.max(0, Math.min(width, this.x));
+                    this.y = Math.max(0, Math.min(height, this.y));
 
-  <script>
-    (function() {
-      // 星空背景
-      const canvas = document.getElementById('starsCanvas');
-      const ctx = canvas.getContext('2d');
-      let stars = [];
-      let width, height;
+                    // 速度衰减
+                    this.speedX *= 0.998;
+                    this.speedY *= 0.998;
+                }
 
-      function resizeCanvas() {
-        width = window.innerWidth;
-        height = window.innerHeight;
-        canvas.width = width;
-        canvas.height = height;
-        initStars();
-      }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.shadowBlur = 12;
+                    ctx.shadowColor = this.color;
+                    ctx.globalAlpha = this.life * 0.8;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    ctx.globalAlpha = 1;
+                }
+            }
 
-      function initStars() {
-        const count = Math.floor(width * height / 1500);
-        stars = [];
-        for (let i = 0; i < count; i++) {
-          stars.push({
-            x: Math.random() * width,
-            y: Math.random() * height,
-            radius: Math.random() * 2.2 + 0.6,
-            alpha: Math.random(),
-            delta: Math.random() * 0.02 + 0.005
-          });
-        }
-      }
+            function initParticles(count) {
+                particles = [];
+                for (let i = 0; i < count; i++) {
+                    particles.push(new Particle());
+                }
+            }
 
-      function drawStars() {
-        ctx.clearRect(0, 0, width, height);
-        ctx.fillStyle = '#ffffff';
-        for (let s of stars) {
-          ctx.globalAlpha = s.alpha;
-          ctx.beginPath();
-          ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
-          ctx.fill();
-          s.alpha += s.delta;
-          if (s.alpha > 0.9 || s.alpha < 0.2) s.delta = -s.delta;
-        }
-        ctx.globalAlpha = 1;
-        requestAnimationFrame(drawStars);
-      }
+            function connectParticles() {
+                const maxDist = 100;
+                for (let a = 0; a < particles.length; a++) {
+                    for (let b = a + 1; b < particles.length; b++) {
+                        const dx = particles[a].x - particles[b].x;
+                        const dy = particles[a].y - particles[b].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < maxDist) {
+                            ctx.beginPath();
+                            ctx.strokeStyle = particles[a].color;
+                            ctx.lineWidth = 0.4 * (1 - dist / maxDist);
+                            ctx.globalAlpha = (1 - dist / maxDist) * 0.3;
+                            ctx.moveTo(particles[a].x, particles[a].y);
+                            ctx.lineTo(particles[b].x, particles[b].y);
+                            ctx.stroke();
+                            ctx.globalAlpha = 1;
+                        }
+                    }
+                }
+            }
 
-      window.addEventListener('resize', resizeCanvas);
-      resizeCanvas();
-      drawStars();
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
 
-      // 打字机效果
-      const textElement = document.getElementById('typingText');
-      const phrases = [
-        '语言是思维的外壳，我帮你找到打开它的钥匙。',
-        '英语不是死记硬背，而是逻辑与习惯的共鸣。',
-        '从高考144分到你的高分，我陪你走最短的路。',
-        '深圳 / 东莞，线下或线上，我们一起让进步发生。'
-      ];
-      let phraseIndex = 0;
-      let charIndex = 0;
-      let isDeleting = false;
-      let currentText = '';
+                // 更新并绘制粒子
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    particles[i].update();
+                    particles[i].draw();
 
-      function typeEffect() {
-        const fullPhrase = phrases[phraseIndex];
+                    if (particles[i].life <= 0.02) {
+                        particles.splice(i, 1);
+                        particles.push(new Particle());
+                    }
+                }
 
-        if (isDeleting) {
-          currentText = fullPhrase.substring(0, charIndex - 1);
-          charIndex--;
-        } else {
-          currentText = fullPhrase.substring(0, charIndex + 1);
-          charIndex++;
-        }
+                // 绘制连线
+                connectParticles();
 
-        textElement.textContent = currentText;
+                requestAnimationFrame(animate);
+            }
 
-        let typeSpeed = isDeleting ? 40 : 80;
+            function resize() {
+                width = window.innerWidth;
+                height = window.innerHeight;
+                canvas.width = width;
+                canvas.height = height;
+            }
 
-        if (!isDeleting && charIndex === fullPhrase.length) {
-          typeSpeed = 1500;
-          isDeleting = true;
-        } else if (isDeleting && charIndex === 0) {
-          isDeleting = false;
-          phraseIndex = (phraseIndex + 1) % phrases.length;
-          typeSpeed = 300;
-        }
+            window.addEventListener('resize', () => {
+                resize();
+                initParticles(Math.floor(width * height / 12000)); // 根据屏幕面积调整数量
+            });
 
-        setTimeout(typeEffect, typeSpeed);
-      }
+            window.addEventListener('mousemove', (e) => {
+                mouse.x = e.clientX;
+                mouse.y = e.clientY;
+            });
 
-      textElement.textContent = '';
-      textElement.classList.add('cursor');
-      setTimeout(typeEffect, 500);
-    })();
-  </script>
+            window.addEventListener('mouseout', () => {
+                mouse.x = null;
+                mouse.y = null;
+            });
+
+            // 触摸设备支持
+            window.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                mouse.x = e.touches[0].clientX;
+                mouse.y = e.touches[0].clientY;
+            }, { passive: false });
+
+            window.addEventListener('touchend', () => {
+                mouse.x = null;
+                mouse.y = null;
+            });
+
+            // 初始化
+            resize();
+            initParticles(Math.floor(width * height / 12000));
+            animate();
+        })();
+    </script>
 </body>
 </html>
