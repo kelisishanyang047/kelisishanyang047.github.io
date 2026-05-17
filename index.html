@@ -3,31 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alex Chen · 雾岛花茶</title>
+    <title>Alex Chen · 纸风琴</title>
     <style>
         :root {
-            --bg-page: linear-gradient(170deg, #faf6f0 0%, #fdf6f9 100%);
-            --card-bg: #fffaf5;
-            --text-primary: #4e423a;
-            --text-secondary: #8f8178;
-            --accent-pink: #d9b4b4;
-            --accent-green: #9bbaab;
-            --shadow-card: 0 2px 12px rgba(0,0,0,0.03);
-            --shadow-hover: 0 6px 20px rgba(0,0,0,0.05);
+            --bg-page: #fcfaf5;
+            --card-bg: #fffdf8;
+            --text-primary: #3a3a3a;
+            --text-secondary: #6b625a;
+            --accent-brown: #c69f7f;
+            --accent-olive: #b3c4a3;
+            --border-subtle: #e6ddd2;
+            --shadow-light: 0 2px 8px rgba(0,0,0,0.03);
+            --shadow-medium: 0 4px 16px rgba(0,0,0,0.05);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
             background: var(--bg-page);
             color: var(--text-primary);
             line-height: 1.6;
             min-height: 100vh;
             position: relative;
+            display: flex;
+            flex-direction: column;
             overflow-x: hidden;
         }
 
+        /* 粒子背景 */
         #particle-canvas {
             position: fixed;
             top: 0;
@@ -36,338 +40,356 @@
             height: 100%;
             z-index: 0;
             pointer-events: none;
-            opacity: 0.55;
+            opacity: 0.5;
         }
 
-        .container {
-            position: relative;
-            z-index: 1;
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 2.5rem 1.5rem 3rem;
-        }
-
-        /* ---- 个人信息大卡片（左上方全宽） ---- */
-        .profile-card {
-            background: var(--card-bg);
-            border-radius: 24px;
-            padding: 2.8rem 3rem;
-            margin-bottom: 2.5rem;
-            box-shadow: var(--shadow-card), 0 0 30px rgba(217,180,180,0.15);
-            position: relative;
-            overflow: hidden;
+        /* 顶部固定横条 */
+        .top-bar {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: rgba(252, 250, 245, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 1.2rem 2rem;
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 2rem;
-            /* 浅色花纹边框 */
-            border: 1px solid rgba(217,180,180,0.4);
+            justify-content: space-between;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.02);
         }
 
-        .profile-card::before {
-            content: '';
-            position: absolute;
-            top: -40px;
-            right: -40px;
-            width: 160px;
-            height: 160px;
-            background: radial-gradient(circle, rgba(217,180,180,0.2) 0%, transparent 70%);
-            border-radius: 50%;
-        }
-
-        .profile-card .avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #f5e7e7, #e8d5d5);
+        .top-bar .info {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 2.8rem;
-            color: white;
-            font-weight: 600;
-            box-shadow: 0 4px 16px rgba(217,180,180,0.3);
-            flex-shrink: 0;
+            gap: 1.5rem;
         }
 
-        .profile-info h1 {
-            font-size: 2.4rem;
+        .top-bar h1 {
+            font-size: 1.8rem;
             font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: 0.3rem;
-            letter-spacing: -0.5px;
+            letter-spacing: -0.3px;
         }
 
-        .profile-info .subtitle {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.8rem;
-            font-weight: 500;
-            letter-spacing: 1px;
-        }
-
-        .profile-info .bio {
+        .top-bar .subtitle {
             font-size: 0.95rem;
             color: var(--text-secondary);
-            line-height: 1.7;
-            max-width: 500px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-left: 1px solid var(--border-subtle);
+            padding-left: 1.5rem;
         }
 
-        .profile-info .contact-links {
+        .top-bar .bio-short {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            max-width: 300px;
+            line-height: 1.4;
+        }
+
+        .top-bar .contact-mini {
             display: flex;
-            gap: 1.5rem;
-            margin-top: 1.2rem;
+            gap: 1.2rem;
             flex-wrap: wrap;
         }
 
-        .profile-info .contact-links a {
-            color: var(--accent-green);
+        .top-bar .contact-mini a {
+            color: var(--accent-olive);
             text-decoration: none;
+            font-size: 0.9rem;
             font-weight: 500;
-            font-size: 0.95rem;
             border-bottom: 1px solid transparent;
             transition: border-color 0.3s, color 0.3s;
         }
-        .profile-info .contact-links a:hover {
-            color: var(--accent-pink);
-            border-bottom-color: var(--accent-pink);
+
+        .top-bar .contact-mini a:hover {
+            color: var(--accent-brown);
+            border-bottom-color: var(--accent-brown);
         }
 
-        /* ---- 瀑布流容器 ---- */
-        .masonry-container {
-            display: flex;
-            gap: 1.8rem;
-            align-items: flex-start;
-        }
-
-        .masonry-column {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 1.8rem;
-        }
-
-        /* 通用卡片样式 */
-        .masonry-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 1.8rem 2rem;
-            box-shadow: var(--shadow-card);
-            transition: transform 0.25s ease, box-shadow 0.3s ease;
+        /* 主体滚动区域 */
+        .main-scroll {
             position: relative;
-            /* 单侧渐变光晕（底部） */
-            border-bottom: 3px solid transparent;
-            border-image: linear-gradient(to right, rgba(217,180,180,0.5), rgba(155,186,171,0.5)) 1;
+            z-index: 1;
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem 2rem 4rem;
+            max-width: 860px;
+            margin: 0 auto;
+            width: 100%;
         }
 
-        .masonry-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-hover), 0 0 20px rgba(217,180,180,0.1);
+        /* 折叠手风琴模块 */
+        .accordion-section {
+            margin-bottom: 2rem;
         }
 
-        .masonry-card h2 {
+        .section-header {
+            background: var(--card-bg);
+            border-radius: 12px 12px 0 0;
+            padding: 1.2rem 2rem;
+            cursor: pointer;
+            position: relative;
+            box-shadow: var(--shadow-light);
+            transition: box-shadow 0.3s, background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* 波浪下边缘 */
+        .section-header::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100%;
+            height: 12px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 12" preserveAspectRatio="none"><path d="M0,6 Q150,0 300,6 T600,6 T900,6 T1200,6 L1200,12 L0,12 Z" fill="%23fffdf8"/></svg>') repeat-x;
+            background-size: auto 12px;
+            z-index: 2;
+        }
+
+        .section-header:hover {
+            box-shadow: var(--shadow-medium);
+            background: #fffcf3;
+        }
+
+        .section-header h2 {
             font-size: 1.5rem;
             font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: 1rem;
             display: flex;
             align-items: center;
-            gap: 0.4rem;
-            border-bottom: 1px solid rgba(155,186,171,0.3);
-            padding-bottom: 0.5rem;
+            gap: 0.8rem;
+        }
+
+        .section-header .arrow {
+            font-size: 1.4rem;
+            color: var(--accent-brown);
+            transition: transform 0.4s ease;
+            transform: rotate(0deg);
+            display: inline-block;
+        }
+
+        .section-header.open .arrow {
+            transform: rotate(180deg);
+        }
+
+        /* 内容面板 */
+        .section-content {
+            background: var(--card-bg);
+            border-radius: 0 0 12px 12px;
+            padding: 0 2rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, padding 0.5s ease, box-shadow 0.3s;
+            box-shadow: var(--shadow-light);
+            opacity: 0;
+        }
+
+        .section-content.open {
+            max-height: 1000px; /* 足够大，适应内容 */
+            padding: 1.8rem 2rem;
+            box-shadow: var(--shadow-medium);
+            opacity: 1;
         }
 
         .item {
-            margin-bottom: 1.2rem;
+            margin-bottom: 1.5rem;
+            padding-left: 1.2rem;
+            border-left: 3px solid transparent;
+            transition: border-color 0.3s;
         }
+
+        .item:hover {
+            border-left-color: var(--accent-olive);
+        }
+
         .item:last-child { margin-bottom: 0; }
 
         .item h3 {
-            font-size: 1.15rem;
+            font-size: 1.2rem;
             color: var(--text-primary);
             margin-bottom: 0.2rem;
         }
 
         .item .meta {
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             color: var(--text-secondary);
             margin-bottom: 0.5rem;
             font-style: italic;
         }
 
         .item p, .item ul {
-            color: #5a5048;
+            color: #4a423a;
             line-height: 1.7;
         }
 
         ul { list-style: none; padding-left: 0; }
         ul li::before {
-            content: '❀';
-            color: var(--accent-pink);
-            margin-right: 0.5rem;
+            content: '❯';
+            color: var(--accent-brown);
+            margin-right: 0.6rem;
             font-size: 0.8rem;
         }
 
         a {
-            color: var(--accent-green);
+            color: var(--accent-olive);
             text-decoration: none;
             font-weight: 500;
             border-bottom: 1px solid transparent;
             transition: border-color 0.3s, color 0.3s;
         }
         a:hover {
-            color: var(--accent-pink);
-            border-bottom-color: var(--accent-pink);
+            color: var(--accent-brown);
+            border-bottom-color: var(--accent-brown);
         }
 
-        /* 技能标签（雾岛风格） */
+        /* 技能标签 */
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
         .skill-tag {
-            display: inline-block;
-            background: rgba(155,186,171,0.1);
-            border: 1px solid rgba(155,186,171,0.3);
-            color: #5d7e6e;
-            padding: 0.3rem 1rem;
+            background: rgba(179, 196, 163, 0.15);
+            border: 1px solid rgba(179, 196, 163, 0.4);
+            color: #5e6b53;
+            padding: 0.3rem 1.2rem;
             border-radius: 20px;
             font-size: 0.85rem;
             font-weight: 500;
-            margin: 0.25rem;
-            transition: 0.25s;
-        }
-        .skill-tag:hover {
-            background: var(--accent-green);
-            color: white;
-            border-color: var(--accent-green);
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(155,186,171,0.3);
+            transition: 0.2s;
         }
 
-        .back-to-top {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 10;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: white;
-            border: 1px solid rgba(155,186,171,0.4);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            color: var(--text-secondary);
-            transition: 0.3s;
-            opacity: 0.8;
-        }
-        .back-to-top:hover {
-            background: var(--accent-green);
+        .skill-tag:hover {
+            background: var(--accent-olive);
             color: white;
-            opacity: 1;
-            border-color: var(--accent-green);
-            transform: translateY(-2px);
+            border-color: var(--accent-olive);
         }
 
         /* 响应式 */
         @media (max-width: 700px) {
-            .profile-card {
+            .top-bar {
                 flex-direction: column;
-                text-align: center;
+                align-items: flex-start;
+                gap: 0.8rem;
             }
-            .profile-info .contact-links {
-                justify-content: center;
-            }
-            .masonry-container {
+            .top-bar .info {
                 flex-direction: column;
+                align-items: flex-start;
+                gap: 0.3rem;
             }
-            .masonry-column {
-                width: 100%;
+            .top-bar .subtitle {
+                border-left: none;
+                padding-left: 0;
             }
+            .main-scroll {
+                padding: 1.5rem 1rem;
+            }
+            .section-header { padding: 1rem 1.2rem; }
+            .section-header h2 { font-size: 1.3rem; }
         }
     </style>
 </head>
 <body>
     <canvas id="particle-canvas"></canvas>
 
-    <div class="container">
-        <!-- 个人信息大卡片 -->
-        <div class="profile-card">
-            <div class="avatar">A</div>
-            <div class="profile-info">
-                <h1>Alex Chen</h1>
-                <div class="subtitle">全栈开发 & AI 研究员</div>
-                <p class="bio">
-                    在茶与代码的香气中寻找平衡，将复杂系统转化为优雅的交互体验。
-                </p>
-                <div class="contact-links">
-                    <a href="mailto:alex.chen@example.com">✉️ alex.chen@example.com</a>
-                    <a href="https://alexchen.dev" target="_blank">🌐 alexchen.dev</a>
-                    <a href="https://linkedin.com/in/alexchen" target="_blank">💼 LinkedIn</a>
-                </div>
-            </div>
+    <!-- 固定顶部横条 -->
+    <header class="top-bar">
+        <div class="info">
+            <h1>Alex Chen</h1>
+            <span class="subtitle">全栈开发 & AI 研究员</span>
+            <span class="bio-short">在逻辑中折叠诗意，于代码间呼吸微风。</span>
         </div>
-
-        <!-- 瀑布流区域（由JS动态分配卡片） -->
-        <div class="masonry-container" id="masonryContainer">
-            <div class="masonry-column" id="colLeft"></div>
-            <div class="masonry-column" id="colRight"></div>
+        <div class="contact-mini">
+            <a href="mailto:alex.chen@example.com">✉️ alex.chen@example.com</a>
+            <a href="https://alexchen.dev" target="_blank">🌐 alexchen.dev</a>
+            <a href="https://linkedin.com/in/alexchen" target="_blank">💼 LinkedIn</a>
         </div>
+    </header>
 
-        <!-- 隐藏的卡片模板，将被JS处理 -->
-        <div style="display:none;" id="cardTemplates">
-            <!-- 教育卡片 -->
-            <div class="masonry-card" data-card>
+    <!-- 可滚动主体 -->
+    <main class="main-scroll">
+        <!-- 教育经历 -->
+        <div class="accordion-section">
+            <div class="section-header" onclick="toggleSection(this)">
                 <h2>📚 教育经历</h2>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="section-content">
                 <div class="item">
                     <h3>计算机科学 硕士</h3>
                     <div class="meta">城市科技大学 · 2022 - 2025</div>
-                    <p>大语言模型对齐与可解释性。GPA 3.9/4.0，获优秀毕业论文。</p>
+                    <p>研究方向：大语言模型对齐与可解释性。GPA 3.9/4.0，获优秀毕业论文。</p>
                 </div>
                 <div class="item">
                     <h3>软件工程 学士</h3>
                     <div class="meta">国立信息大学 · 2018 - 2022</div>
-                    <p>核心课程：数据结构、算法设计。毕业设计获最佳创新奖。</p>
+                    <p>核心课程：数据结构、算法设计、操作系统。毕业设计获最佳创新奖。</p>
                 </div>
             </div>
-            <!-- 工作卡片 -->
-            <div class="masonry-card" data-card>
+        </div>
+
+        <!-- 工作经历 -->
+        <div class="accordion-section">
+            <div class="section-header" onclick="toggleSection(this)">
                 <h2>💼 工作经历</h2>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="section-content">
                 <div class="item">
                     <h3>前端架构师 · 星河科技</h3>
                     <div class="meta">2023.06 - 至今</div>
                     <ul>
                         <li>主导低代码平台前端架构，服务10万+开发者</li>
-                        <li>首屏加载性能优化40%</li>
+                        <li>首屏加载性能优化40%，引入 WebAssembly 加速</li>
                     </ul>
                 </div>
                 <div class="item">
                     <h3>实习生 · 未来智能</h3>
                     <div class="meta">2022.07 - 2023.04</div>
                     <ul>
-                        <li>AI对话系统前端，流式响应</li>
-                        <li>Vue3组件库，测试覆盖率85%</li>
+                        <li>参与AI对话系统前端，实现流式响应</li>
+                        <li>Vue3组件库构建，测试覆盖率85%</li>
                     </ul>
                 </div>
             </div>
-            <!-- 项目卡片 -->
-            <div class="masonry-card" data-card>
+        </div>
+
+        <!-- 精选项目 -->
+        <div class="accordion-section">
+            <div class="section-header" onclick="toggleSection(this)">
                 <h2>🚀 精选项目</h2>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="section-content">
                 <div class="item">
                     <h3>Neural Canvas</h3>
-                    <div class="meta"><a href="#">GitHub ↗</a> · ⭐ 2.3k</div>
-                    <p>神经网络交互绘图工具，手势生成矢量图形。</p>
+                    <div class="meta">开源项目 · <a href="https://github.com/example/neural-canvas" target="_blank">GitHub ↗</a> · ⭐ 2.3k</div>
+                    <p>神经网络交互绘图工具，手势生成矢量图形，支持导出 SVG/PNG。</p>
                 </div>
                 <div class="item">
                     <h3>CodeSync</h3>
-                    <div class="meta"><a href="#">codesync.dev ↗</a></div>
-                    <p>实时协作代码编辑器，黑客马拉松冠军。</p>
+                    <div class="meta">团队作品 · <a href="https://codesync.dev" target="_blank">codesync.dev ↗</a></div>
+                    <p>实时协作代码编辑器，集成视频会议，黑客马拉松冠军。</p>
                 </div>
             </div>
-            <!-- 技能卡片 -->
-            <div class="masonry-card" data-card>
+        </div>
+
+        <!-- 技术栈 -->
+        <div class="accordion-section">
+            <div class="section-header" onclick="toggleSection(this)">
                 <h2>⚡ 技术栈</h2>
-                <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+                <span class="arrow">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="skill-tags">
                     <span class="skill-tag">TypeScript</span>
                     <span class="skill-tag">React</span>
                     <span class="skill-tag">Vue</span>
@@ -379,28 +401,61 @@
                     <span class="skill-tag">LangChain</span>
                 </div>
             </div>
-            <!-- 发表卡片 -->
-            <div class="masonry-card" data-card>
+        </div>
+
+        <!-- 学术发表 -->
+        <div class="accordion-section">
+            <div class="section-header" onclick="toggleSection(this)">
                 <h2>📄 学术发表</h2>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="section-content">
                 <div class="item">
-                    <h3>Self-Critique Prompting</h3>
-                    <div class="meta">ACL 2024 · 第一作者</div>
-                    <p>自我批判提示框架，提升推理性能。</p>
+                    <h3>Self-Critique Prompting for LLM Reasoning</h3>
+                    <div class="meta">ACL 2024 · 第一作者 · <a href="https://doi.org/10.1234/example.2024" target="_blank">查看期刊 ↗</a></div>
+                    <p>提出自我批判提示框架，显著提升复杂推理表现。</p>
                 </div>
                 <div class="item">
-                    <h3>Lightweight Attention</h3>
-                    <div class="meta">NeurIPS 2023 Workshop</div>
-                    <p>移动端友好注意力机制，降低70%内存。</p>
+                    <h3>Lightweight Attention for Edge Devices</h3>
+                    <div class="meta">NeurIPS 2023 Workshop · 合作者</div>
+                    <p>移动端友好注意力机制，降低70%内存占用。</p>
                 </div>
             </div>
         </div>
-    </div>
-
-    <button class="back-to-top" id="backToTop" title="回到顶部" style="display:none;">↑</button>
+    </main>
 
     <script>
+        // 折叠/展开切换
+        function toggleSection(header) {
+            const content = header.nextElementSibling;
+            const isOpen = header.classList.contains('open');
+
+            // 关闭所有其他打开的
+            document.querySelectorAll('.section-header.open').forEach(openHeader => {
+                if (openHeader !== header) {
+                    openHeader.classList.remove('open');
+                    openHeader.nextElementSibling.classList.remove('open');
+                }
+            });
+
+            if (isOpen) {
+                header.classList.remove('open');
+                content.classList.remove('open');
+            } else {
+                header.classList.add('open');
+                content.classList.add('open');
+            }
+        }
+
+        // 默认展开第一个模块（教育经历）
+        const firstHeader = document.querySelector('.section-header');
+        if (firstHeader) {
+            firstHeader.classList.add('open');
+            firstHeader.nextElementSibling.classList.add('open');
+        }
+
+        // ---- 粒子背景（柔和象牙色系） ----
         (() => {
-            // ---- 粒子背景 ----
             const canvas = document.getElementById('particle-canvas');
             const ctx = canvas.getContext('2d');
             let width, height;
@@ -408,18 +463,18 @@
             const mouse = { x: null, y: null, radius: 80 };
 
             const colors = [
-                'rgba(217,180,180,0.5)',
-                'rgba(155,186,171,0.5)',
-                'rgba(210,190,170,0.45)',
-                'rgba(200,170,160,0.4)',
-                'rgba(180,190,170,0.4)'
+                'rgba(198,159,127,0.45)',
+                'rgba(179,196,163,0.45)',
+                'rgba(210,200,180,0.4)',
+                'rgba(190,175,155,0.4)',
+                'rgba(200,185,160,0.35)'
             ];
 
             class Particle {
                 constructor(x, y) {
                     this.x = x || Math.random() * width;
                     this.y = y || Math.random() * height;
-                    this.size = Math.random() * 2.5 + 0.8;
+                    this.size = Math.random() * 2.2 + 0.6;
                     this.speedX = (Math.random() - 0.5) * 0.5;
                     this.speedY = (Math.random() - 0.5) * 0.5;
                     this.color = colors[Math.floor(Math.random() * colors.length)];
@@ -455,7 +510,7 @@
                 }
             }
 
-            function initParticles(count) {
+            function init(count) {
                 particles = [];
                 for (let i = 0; i < count; i++) particles.push(new Particle());
             }
@@ -469,7 +524,7 @@
                         const dist = Math.sqrt(dx * dx + dy * dy);
                         if (dist < maxDist) {
                             ctx.beginPath();
-                            ctx.strokeStyle = 'rgba(217,180,180,0.1)';
+                            ctx.strokeStyle = 'rgba(198,159,127,0.1)';
                             ctx.lineWidth = 0.5 * (1 - dist/maxDist);
                             ctx.moveTo(particles[a].x, particles[a].y);
                             ctx.lineTo(particles[b].x, particles[b].y);
@@ -479,14 +534,14 @@
                 }
             }
 
-            function animateParticles() {
+            function animate() {
                 ctx.clearRect(0, 0, width, height);
                 for (let p of particles) { p.update(); p.draw(); }
                 connect();
-                requestAnimationFrame(animateParticles);
+                requestAnimationFrame(animate);
             }
 
-            function resizeCanvas() {
+            function resize() {
                 width = window.innerWidth;
                 height = window.innerHeight;
                 canvas.width = width;
@@ -494,8 +549,8 @@
             }
 
             window.addEventListener('resize', () => {
-                resizeCanvas();
-                initParticles(Math.floor(width * height / 17000));
+                resize();
+                init(Math.floor(width * height / 18000));
             });
             window.addEventListener('mousemove', e => {
                 mouse.x = e.clientX;
@@ -508,56 +563,9 @@
             }, { passive: true });
             window.addEventListener('touchend', () => { mouse.x = null; mouse.y = null; });
 
-            resizeCanvas();
-            initParticles(Math.floor(width * height / 17000));
-            animateParticles();
-
-            // ---- 瀑布流布局 ----
-            const colLeft = document.getElementById('colLeft');
-            const colRight = document.getElementById('colRight');
-            const templates = document.querySelectorAll('#cardTemplates [data-card]');
-
-            function placeCards() {
-                // 清空列
-                colLeft.innerHTML = '';
-                colRight.innerHTML = '';
-
-                // 将卡片转换为实际DOM元素
-                const cards = Array.from(templates).map(tpl => tpl.cloneNode(true));
-                // 随机打乱卡片顺序可以增加变化，但通常保持原有顺序
-                // 这里保持顺序
-                cards.forEach(card => {
-                    // 暂存到临时容器以测量高度
-                    const temp = document.createElement('div');
-                    temp.style.position = 'absolute';
-                    temp.style.visibility = 'hidden';
-                    temp.style.width = colLeft.clientWidth + 'px'; // 假设列宽一样
-                    temp.appendChild(card);
-                    document.body.appendChild(temp);
-                    const cardHeight = temp.offsetHeight;
-                    document.body.removeChild(temp);
-
-                    // 添加到较短的列
-                    if (colLeft.offsetHeight <= colRight.offsetHeight) {
-                        colLeft.appendChild(card);
-                    } else {
-                        colRight.appendChild(card);
-                    }
-                });
-            }
-
-            // 初始布局
-            placeCards();
-            window.addEventListener('resize', placeCards);
-
-            // ---- 回到顶部按钮 ----
-            const btn = document.getElementById('backToTop');
-            window.addEventListener('scroll', () => {
-                btn.style.display = window.scrollY > 400 ? 'flex' : 'none';
-            });
-            btn.addEventListener('click', () => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
+            resize();
+            init(Math.floor(width * height / 18000));
+            animate();
         })();
     </script>
 </body>
