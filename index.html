@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alex Chen · 个人简历</title>
+    <title>Alex Chen · 薄暮雪松</title>
     <style>
         :root {
-            --bg-primary: #f6f7fb;
-            --bg-card: rgba(255, 255, 255, 0.82);
-            --text-primary: #2c3e50;
-            --text-secondary: #5a6b7c;
-            --accent-gold: #c9a962;
-            --accent-purple: #8b7aa6;
-            --accent-teal: #6b9e9a;
-            --soft-glow: 0 2px 18px rgba(0,0,0,0.06);
-            --border-light: rgba(200, 180, 140, 0.25);
+            --bg-page: #f0f3f6;
+            --bg-card: #ffffff;
+            --text-primary: #2c3a47;
+            --text-secondary: #7b8a97;
+            --line-color: #9aaec4;
+            --accent-green: #738a7c;
+            --accent-purple: #b0a8c0;
+            --accent-soft-blue: #9aaec4;
+            --shadow-light: 0 2px 12px rgba(0,0,0,0.04);
+            --shadow-medium: 0 6px 20px rgba(0,0,0,0.05);
         }
 
         * {
@@ -25,14 +26,14 @@
 
         body {
             font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #f4f2f0 0%, #eae6e1 100%);
+            background-color: var(--bg-page);
             color: var(--text-primary);
             line-height: 1.6;
-            overflow: hidden;
-            height: 100vh;
+            overflow-x: hidden;
+            position: relative;
         }
 
-        /* 粒子背景 */
+        /* 粒子背景（极淡，不干扰阅读） */
         #particle-canvas {
             position: fixed;
             top: 0;
@@ -41,342 +42,356 @@
             height: 100%;
             z-index: 0;
             pointer-events: none;
+            opacity: 0.6;
         }
 
-        .layout {
+        .container {
             position: relative;
             z-index: 1;
-            display: flex;
-            height: 100vh;
-            max-width: 1200px;
+            max-width: 960px;
             margin: 0 auto;
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
+            padding: 3rem 1.5rem 2rem;
         }
 
-        /* 左侧个人信息 */
-        .sidebar {
-            width: 320px;
-            flex-shrink: 0;
-            background: rgba(255, 255, 255, 0.55);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-right: 1px solid var(--border-light);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 3.5rem 2rem 2rem;
-            box-shadow: 2px 0 20px rgba(0,0,0,0.03);
-            overflow-y: auto;
+        /* ---- 顶部个人信息“起点徽章” ---- */
+        .header-badge {
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
         }
 
-        .avatar {
-            width: 130px;
-            height: 130px;
+        .avatar-circle {
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #e4d5b7, #d1c4e9);
+            background: linear-gradient(135deg, #cbd5e1, #a5b4cb);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3.5rem;
+            font-size: 3.2rem;
             color: white;
             font-weight: 600;
-            box-shadow: 0 8px 24px rgba(139, 122, 166, 0.2);
-            margin-bottom: 1.8rem;
-            border: 3px solid rgba(255,255,255,0.8);
+            box-shadow: 0 0 0 6px rgba(255,255,255,0.8), 0 8px 24px rgba(108, 122, 137, 0.18);
+            margin: 0 auto 1.5rem;
+            border: 2px solid rgba(255,255,255,0.9);
         }
 
-        .sidebar h1 {
-            font-size: 2rem;
+        .header-badge h1 {
+            font-size: 2.4rem;
             font-weight: 700;
-            color: #3b3b4d;
+            color: #2c3a47;
+            letter-spacing: -0.3px;
             margin-bottom: 0.2rem;
-            text-align: center;
         }
 
-        .sidebar .subtitle {
+        .header-badge .subtitle {
             font-size: 1rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
             font-weight: 500;
-            color: var(--text-secondary);
-            letter-spacing: 1.5px;
-            margin-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border-light);
-            padding-bottom: 0.8rem;
-            text-align: center;
+            margin-bottom: 0.8rem;
         }
 
-        .sidebar .bio {
-            font-size: 0.92rem;
+        .header-badge .bio {
+            font-size: 0.95rem;
             color: var(--text-secondary);
-            text-align: center;
+            max-width: 500px;
+            margin: 0 auto;
             line-height: 1.7;
-            margin-bottom: 2rem;
-            padding: 0 0.5rem;
+            font-weight: 400;
         }
 
-        .sidebar .info-links {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            width: 100%;
-            margin-bottom: 2rem;
+        /* ---- 时间轴布局 ---- */
+        .timeline {
+            position: relative;
+            margin: 2rem 0 3rem;
+            padding-left: 0;
         }
 
-        .sidebar .info-link {
+        /* 垂直线 */
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 160px; /* 左侧节点位置 */
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: repeating-linear-gradient(
+                to bottom,
+                var(--line-color) 0px,
+                var(--line-color) 6px,
+                transparent 6px,
+                transparent 14px
+            );
+            opacity: 0.6;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2.5rem;
+            padding-left: 200px; /* 左侧留空给节点和日期 */
+            min-height: 80px;
+        }
+
+        /* 时间节点圆圈 */
+        .timeline-node {
+            position: absolute;
+            left: 160px;
+            top: 6px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--accent-green);
+            box-shadow: 0 0 0 4px rgba(115, 138, 124, 0.12);
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+
+        /* 左侧信息（日期/机构） */
+        .timeline-left {
+            position: absolute;
+            left: 0;
+            top: 2px;
+            width: 140px;
+            text-align: right;
+            padding-right: 25px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .timeline-left .date {
+            display: block;
+            color: var(--accent-green);
+            font-weight: 600;
+            margin-bottom: 2px;
+            font-size: 0.9rem;
+        }
+
+        .timeline-left .org {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* 右侧内容卡片 */
+        .timeline-content {
+            background: var(--bg-card);
+            border-radius: 14px;
+            padding: 1.5rem 2rem;
+            box-shadow: var(--shadow-light);
+            border: 1px solid rgba(154, 174, 196, 0.2);
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .timeline-content:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+            border-color: rgba(115, 138, 124, 0.3);
+        }
+
+        .timeline-content h3 {
+            font-size: 1.3rem;
+            font-weight: 650;
+            color: #2c3a47;
+            margin-bottom: 0.3rem;
+        }
+
+        .timeline-content .sub-info {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(154, 174, 196, 0.2);
+            padding-bottom: 0.6rem;
+        }
+
+        .timeline-content p,
+        .timeline-content ul {
+            color: #3a4650;
+            line-height: 1.7;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        ul li::before {
+            content: '▹';
+            color: var(--accent-purple);
+            margin-right: 0.5rem;
+            font-weight: bold;
+        }
+
+        a {
+            color: var(--accent-green);
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s, color 0.2s;
+        }
+        a:hover {
+            color: #5a6e63;
+            border-bottom-color: var(--accent-green);
+        }
+
+        /* 分隔标题 */
+        .section-title {
+            font-size: 1.4rem;
+            color: var(--accent-purple);
+            margin: 2rem 0 1.5rem 160px;
+            padding-left: 0;
+            position: relative;
+            font-weight: 600;
+        }
+
+        /* ---- 底部联系方式与技能三列网格 ---- */
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.8rem;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(154, 174, 196, 0.3);
+        }
+
+        .footer-column {
+            background: rgba(255,255,255,0.5);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border-radius: 14px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-light);
+            border: 1px solid rgba(154, 174, 196, 0.15);
+        }
+
+        .footer-column h4 {
+            font-size: 1rem;
+            color: var(--accent-purple);
+            margin-bottom: 1rem;
+            font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 0.6rem;
-            padding: 0.5rem 1rem;
-            background: white;
-            border-radius: 30px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #5a5a6e;
+            justify-content: center;
+            gap: 0.3rem;
+        }
+
+        .footer-column .contact-item {
+            display: block;
+            color: var(--text-primary);
             text-decoration: none;
-            transition: all 0.3s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-            border: 1px solid transparent;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            padding: 0.3rem 0;
+            transition: 0.2s;
+            border-bottom: none;
         }
 
-        .sidebar .info-link.email { border-color: rgba(201, 169, 98, 0.4); }
-        .sidebar .info-link.website { border-color: rgba(139, 122, 166, 0.4); }
-        .sidebar .info-link.linkedin { border-color: rgba(107, 158, 154, 0.4); }
-
-        .sidebar .info-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 18px rgba(0,0,0,0.06);
+        .footer-column .contact-item:hover {
+            color: var(--accent-green);
         }
-        .sidebar .info-link.email:hover { background: #fdf7ed; }
-        .sidebar .info-link.website:hover { background: #f5f2fa; }
-        .sidebar .info-link.linkedin:hover { background: #eff6f5; }
 
-        .sidebar .skill-tags {
+        .skill-tags {
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem;
             justify-content: center;
-            margin-top: auto;
         }
 
-        .sidebar .skill-tag {
-            background: rgba(139, 122, 166, 0.06);
-            border: 1px solid rgba(139, 122, 166, 0.25);
-            color: #6a5b7b;
-            padding: 0.25rem 0.8rem;
+        .skill-tag {
+            background: rgba(176, 168, 192, 0.12);
+            border: 1px solid rgba(176, 168, 192, 0.3);
+            color: #5d5a6b;
+            padding: 0.2rem 0.9rem;
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 500;
             transition: 0.2s;
         }
 
-        .sidebar .skill-tag:hover {
+        .skill-tag:hover {
             background: var(--accent-purple);
             color: white;
             border-color: var(--accent-purple);
         }
 
-        /* 右侧可滚动卡片区域 */
-        .main-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 2.5rem 2.5rem 4rem;
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-            scroll-behavior: smooth;
-        }
-
-        /* 卡片通用样式 */
-        .card {
-            background: rgba(255,255,255,0.72);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border-radius: 20px;
-            padding: 2rem 2.2rem;
-            box-shadow: var(--soft-glow);
-            transition: transform 0.25s ease, box-shadow 0.3s ease;
-            border: 1px solid transparent;
-        }
-
-        /* 不同边框样式保持 */
-        .card.education {
-            border-top: 4px solid var(--accent-gold);
-            border-left: 4px solid var(--accent-gold);
-        }
-        .card.experience {
-            border-right: 4px solid var(--accent-teal);
-            border-bottom: 4px solid var(--accent-teal);
-        }
-        .card.projects {
-            border: 2px dashed var(--accent-purple);
-        }
-        .card.skills-card {
-            border: 2px solid rgba(201, 169, 98, 0.25);
-            background: rgba(245, 240, 235, 0.9);
-        }
-        .card.publications {
-            border-left: 5px solid var(--accent-teal);
-            border-bottom: 5px solid var(--accent-purple);
-        }
-
-        .card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 14px 28px rgba(0,0,0,0.08);
-        }
-
-        .card h2 {
-            font-size: 1.6rem;
-            font-weight: 650;
-            margin-bottom: 1.4rem;
-            color: #3b3b4d;
-            border-bottom: 2px solid rgba(201, 169, 98, 0.4);
-            padding-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .item {
-            margin-bottom: 1.4rem;
-            padding-left: 1.2rem;
-            border-left: 3px solid var(--accent-gold);
-            transition: border-color 0.3s;
-        }
-        .item:hover { border-left-color: var(--accent-purple); }
-        .item:last-child { margin-bottom: 0; }
-
-        .item h3 {
-            font-size: 1.2rem;
-            color: #3b3b4d;
-            margin-bottom: 0.1rem;
-            font-weight: 600;
-        }
-
-        .item .meta {
-            font-size: 0.88rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .item p, .item ul {
-            color: #4a5560;
-            line-height: 1.7;
-        }
-
-        ul { list-style-type: none; padding-left: 0; }
-        ul li::before {
-            content: '▹';
-            color: var(--accent-teal);
-            margin-right: 0.6rem;
-            font-weight: bold;
-        }
-
-        a {
-            color: var(--accent-teal);
-            text-decoration: none;
-            font-weight: 500;
-            position: relative;
-            transition: color 0.3s;
-        }
-        a::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 100%;
-            height: 1.5px;
-            background: var(--accent-gold);
-            transform: scaleX(0);
-            transform-origin: right;
-            transition: transform 0.3s ease;
-        }
-        a:hover { color: #b2904d; }
-        a:hover::after {
-            transform: scaleX(1);
-            transform-origin: left;
-        }
-
-        .pub-link {
-            display: inline-block;
-            margin-top: 0.3rem;
-            background: rgba(139, 122, 166, 0.06);
-            border: 1px dashed var(--accent-purple);
-            padding: 0.25rem 1rem;
-            border-radius: 30px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: #5b4b6b;
-            transition: 0.3s;
-        }
-        .pub-link:hover {
-            background: var(--accent-purple);
-            color: white;
-            border-style: solid;
-        }
-
-        /* 自动滚动控制 */
-        .scroll-control {
+        /* 回到顶部按钮 */
+        .back-to-top {
             position: fixed;
             bottom: 30px;
             right: 30px;
             z-index: 10;
-            background: rgba(255,255,255,0.8);
-            backdrop-filter: blur(8px);
-            border-radius: 40px;
-            padding: 0.5rem;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-            display: flex;
-            gap: 0.4rem;
-        }
-
-        .scroll-btn {
-            width: 36px;
-            height: 36px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
-            border: none;
             background: white;
-            color: var(--text-secondary);
-            font-size: 1.2rem;
+            border: 1px solid rgba(154, 174, 196, 0.4);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             cursor: pointer;
-            transition: 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            font-size: 1.4rem;
+            color: var(--text-secondary);
+            transition: 0.3s;
+            opacity: 0.8;
         }
 
-        .scroll-btn:hover {
-            background: var(--accent-gold);
+        .back-to-top:hover {
+            background: var(--accent-green);
             color: white;
+            opacity: 1;
+            border-color: var(--accent-green);
+            transform: translateY(-2px);
         }
 
-        .scroll-btn.active {
-            background: var(--accent-purple);
-            color: white;
-        }
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem 1rem;
+            }
 
-        @media (max-width: 800px) {
-            .layout {
-                flex-direction: column;
-                height: auto;
-                overflow: auto;
+            .timeline::before {
+                left: 30px;
             }
-            .sidebar {
-                width: 100%;
-                padding: 2rem 1.5rem;
-                border-right: none;
-                border-bottom: 1px solid var(--border-light);
+
+            .timeline-item {
+                padding-left: 60px;
             }
-            .main-content {
-                padding: 1.5rem 1rem;
-                overflow-y: visible;
+
+            .timeline-node {
+                left: 30px;
             }
-            .scroll-control {
-                bottom: 20px;
-                right: 15px;
+
+            .timeline-left {
+                position: static;
+                width: auto;
+                text-align: left;
+                padding-right: 0;
+                margin-bottom: 0.5rem;
+                display: flex;
+                gap: 0.5rem;
+                align-items: baseline;
+            }
+
+            .timeline-left .date {
+                margin-bottom: 0;
+            }
+
+            .section-title {
+                margin-left: 30px;
+                font-size: 1.2rem;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-badge h1 {
+                font-size: 2rem;
             }
         }
     </style>
@@ -384,148 +399,205 @@
 <body>
     <canvas id="particle-canvas"></canvas>
 
-    <div class="layout">
-        <!-- 左侧个人信息 -->
-        <aside class="sidebar">
-            <div class="avatar">A</div>
+    <div class="container">
+        <!-- 起点徽章 -->
+        <header class="header-badge">
+            <div class="avatar-circle">A</div>
             <h1>Alex Chen</h1>
             <div class="subtitle">全栈开发 & AI 研究员</div>
             <p class="bio">
-                热衷于构建优雅的数字体验，将复杂逻辑转化为简洁交互。
+                在代码与逻辑的静谧森林中漫步，将复杂问题转化为清晰的时间线叙事。
             </p>
-            <div class="info-links">
-                <a href="mailto:alex.chen@example.com" class="info-link email">
-                    ✉️ alex.chen@example.com
-                </a>
-                <a href="https://alexchen.dev" target="_blank" class="info-link website">
-                    🌐 alexchen.dev
-                </a>
-                <a href="https://linkedin.com/in/alexchen" target="_blank" class="info-link linkedin">
-                    💼 LinkedIn
-                </a>
-            </div>
-            <div class="skill-tags">
-                <span class="skill-tag">JavaScript</span>
-                <span class="skill-tag">TypeScript</span>
-                <span class="skill-tag">React</span>
-                <span class="skill-tag">Vue</span>
-                <span class="skill-tag">Node.js</span>
-                <span class="skill-tag">Python</span>
-                <span class="skill-tag">PyTorch</span>
-                <span class="skill-tag">LangChain</span>
-                <span class="skill-tag">Docker</span>
-                <span class="skill-tag">AWS</span>
-            </div>
-        </aside>
+        </header>
 
-        <!-- 右侧可滚动卡片区域 -->
-        <main class="main-content" id="mainContent">
-            <!-- 教育经历 -->
-            <section class="card education">
-                <h2>📚 教育经历</h2>
-                <div class="item">
+        <!-- 时间轴区域 -->
+        <div class="timeline">
+            <!-- 教育经历板块 -->
+            <h2 class="section-title">📚 教育经历</h2>
+
+            <div class="timeline-item">
+                <div class="timeline-node"></div>
+                <div class="timeline-left">
+                    <span class="date">2022 - 2025</span>
+                    <span class="org">城市科技大学</span>
+                </div>
+                <div class="timeline-content">
                     <h3>计算机科学 硕士</h3>
-                    <div class="meta">城市科技大学 · 2022 - 2025</div>
-                    <p>研究方向：大语言模型对齐与可解释性。GPA 3.9/4.0，获优秀毕业论文。</p>
+                    <div class="sub-info">GPA 3.9/4.0 · 优秀毕业论文</div>
+                    <p>研究方向：大语言模型对齐与可解释性。论文提出一种自我批判提示框架，被ACL 2024接收。</p>
                 </div>
-                <div class="item">
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-node"></div>
+                <div class="timeline-left">
+                    <span class="date">2018 - 2022</span>
+                    <span class="org">国立信息大学</span>
+                </div>
+                <div class="timeline-content">
                     <h3>软件工程 学士</h3>
-                    <div class="meta">国立信息大学 · 2018 - 2022</div>
-                    <p>核心课程：数据结构、算法设计、操作系统。毕业设计获最佳创新奖。</p>
+                    <div class="sub-info">最佳创新奖 · 毕业设计</div>
+                    <p>核心课程：数据结构、算法设计、操作系统、计算机网络。毕业设计开发了一款实时协作编辑器，获校级表彰。</p>
                 </div>
-            </section>
+            </div>
 
-            <!-- 工作经历 -->
-            <section class="card experience">
-                <h2>💼 工作经历</h2>
-                <div class="item">
-                    <h3>前端架构师 · 星河科技</h3>
-                    <div class="meta">2023.06 - 至今</div>
+            <!-- 工作经历板块 -->
+            <h2 class="section-title">💼 工作经历</h2>
+
+            <div class="timeline-item">
+                <div class="timeline-node"></div>
+                <div class="timeline-left">
+                    <span class="date">2023.06 - 至今</span>
+                    <span class="org">星河科技</span>
+                </div>
+                <div class="timeline-content">
+                    <h3>前端架构师</h3>
+                    <div class="sub-info">低代码平台 · 核心团队</div>
                     <ul>
-                        <li>主导低代码平台前端架构，服务10万+开发者</li>
-                        <li>优化渲染性能，首屏加载时间降低40%</li>
-                        <li>引入 WebAssembly 处理计算密集型任务</li>
+                        <li>主导设计新一代低代码平台前端架构，服务10万+开发者</li>
+                        <li>首屏加载性能优化40%，引入 WebAssembly 处理密集计算任务</li>
+                        <li>建立组件库与自动化测试体系，代码覆盖率提升至90%</li>
                     </ul>
                 </div>
-                <div class="item">
-                    <h3>软件开发实习生 · 未来智能</h3>
-                    <div class="meta">2022.07 - 2023.04</div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-node"></div>
+                <div class="timeline-left">
+                    <span class="date">2022.07 - 2023.04</span>
+                    <span class="org">未来智能</span>
+                </div>
+                <div class="timeline-content">
+                    <h3>软件开发实习生</h3>
+                    <div class="sub-info">AI对话系统团队</div>
                     <ul>
-                        <li>参与AI对话系统前端开发，实现流式响应</li>
-                        <li>基于 Vue3 构建组件库，测试覆盖率85%</li>
+                        <li>参与AI助手前端开发，实现流式响应与Markdown动态渲染</li>
+                        <li>基于Vue3构建可复用组件库，单元测试覆盖率达85%</li>
+                        <li>优化长列表渲染性能，虚拟滚动技术减少DOM节点80%</li>
                     </ul>
                 </div>
-            </section>
+            </div>
 
-            <!-- 精选项目 -->
-            <section class="card projects">
-                <h2>🚀 精选项目</h2>
-                <div class="item">
+            <!-- 项目亮点板块 -->
+            <h2 class="section-title">🚀 精选项目</h2>
+
+            <div class="timeline-item">
+                <div class="timeline-node"></div>
+                <div class="timeline-left">
+                    <span class="date">2024</span>
+                    <span class="org">开源项目</span>
+                </div>
+                <div class="timeline-content">
                     <h3>Neural Canvas</h3>
-                    <div class="meta">开源项目 · <a href="https://github.com/example/neural-canvas" target="_blank">GitHub ↗</a></div>
-                    <p>神经网络交互绘图工具，通过手势生成矢量图形。⭐ 2.3k</p>
+                    <div class="sub-info"><a href="https://github.com/example/neural-canvas" target="_blank">GitHub ↗</a> · ⭐ 2.3k</div>
+                    <p>基于神经网络的交互式绘图工具，通过手势生成矢量图形，支持导出 SVG/PNG。</p>
                 </div>
-                <div class="item">
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-node"></div>
+                <div class="timeline-left">
+                    <span class="date">2023</span>
+                    <span class="org">团队作品</span>
+                </div>
+                <div class="timeline-content">
                     <h3>CodeSync</h3>
-                    <div class="meta">团队项目 · <a href="https://codesync.dev" target="_blank">codesync.dev ↗</a></div>
-                    <p>实时协作代码编辑器，支持视频会议，黑客马拉松冠军作品。</p>
+                    <div class="sub-info"><a href="https://codesync.dev" target="_blank">codesync.dev ↗</a> · 黑客马拉松冠军</div>
+                    <p>实时协作代码编辑器，集成视频会议与多语言编译，支持离线P2P同步。</p>
                 </div>
-            </section>
+            </div>
 
-            <!-- 技术栈（单独卡片） -->
-            <section class="card skills-card">
-                <h2>⚡ 技术栈</h2>
-                <div class="item" style="border-left-color: var(--accent-teal);">
-                    <p style="margin-top: 0.5rem;">前后端分离开发、机器学习工程化、容器化部署与自动化测试。</p>
+            <!-- 学术发表板块 -->
+            <h2 class="section-title">📄 学术发表</h2>
+
+            <div class="timeline-item">
+                <div class="timeline-node"></div>
+                <div class="timeline-left">
+                    <span class="date">2024</span>
+                    <span class="org">ACL 2024</span>
                 </div>
-            </section>
-
-            <!-- 学术发表 -->
-            <section class="card publications">
-                <h2>📄 学术发表</h2>
-                <div class="item">
+                <div class="timeline-content">
                     <h3>Enhancing LLM Reasoning via Self-Critique Prompting</h3>
-                    <div class="meta">ACL 2024 · 第一作者</div>
-                    <p>提出自我批判提示框架，显著提升复杂推理表现。</p>
-                    <a href="https://doi.org/10.1234/example.2024" target="_blank" class="pub-link">📎 查看期刊</a>
+                    <div class="sub-info">第一作者 · <a href="https://doi.org/10.1234/example.2024" target="_blank">查看期刊 ↗</a></div>
+                    <p>提出一种轻量级自我批判提示方法，在推理基准测试中提升15%准确率，无需额外训练。</p>
                 </div>
-                <div class="item">
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-node"></div>
+                <div class="timeline-left">
+                    <span class="date">2023</span>
+                    <span class="org">NeurIPS Workshop</span>
+                </div>
+                <div class="timeline-content">
                     <h3>Lightweight Attention for Edge Devices</h3>
-                    <div class="meta">NeurIPS 2023 Workshop · 合作者</div>
-                    <p>移动端友好注意力机制，降低70%内存占用。</p>
-                    <a href="https://neurips.cc/example" target="_blank" class="pub-link">📎 查看期刊</a>
+                    <div class="sub-info">合作者 · <a href="https://neurips.cc/example" target="_blank">查看论文 ↗</a></div>
+                    <p>设计一种移动端友好的注意力机制，降低70%内存占用，保持模型精度。</p>
                 </div>
-            </section>
-        </main>
+            </div>
+        </div>
+
+        <!-- 底部联系方式 & 技能网格 -->
+        <div class="footer-grid">
+            <div class="footer-column">
+                <h4>📬 联系方式</h4>
+                <a href="mailto:alex.chen@example.com" class="contact-item">✉️ alex.chen@example.com</a>
+                <a href="https://alexchen.dev" target="_blank" class="contact-item">🌐 alexchen.dev</a>
+                <a href="https://linkedin.com/in/alexchen" target="_blank" class="contact-item">💼 LinkedIn</a>
+            </div>
+            <div class="footer-column">
+                <h4>⚡ 核心技能</h4>
+                <div class="skill-tags">
+                    <span class="skill-tag">TypeScript</span>
+                    <span class="skill-tag">React</span>
+                    <span class="skill-tag">Vue</span>
+                    <span class="skill-tag">Python</span>
+                    <span class="skill-tag">PyTorch</span>
+                    <span class="skill-tag">Docker</span>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h4>🔧 常用工具</h4>
+                <div class="skill-tags">
+                    <span class="skill-tag">Git</span>
+                    <span class="skill-tag">AWS</span>
+                    <span class="skill-tag">Figma</span>
+                    <span class="skill-tag">Node.js</span>
+                    <span class="skill-tag">LangChain</span>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- 自动/手动滚动控制 -->
-    <div class="scroll-control">
-        <button class="scroll-btn" id="btnAutoScroll" title="自动缓慢浏览">⟳</button>
-        <button class="scroll-btn" id="btnScrollTop" title="回到顶部">↑</button>
-    </div>
+    <button class="back-to-top" id="backToTop" title="回到顶部">↑</button>
 
     <script>
         (function() {
-            // 粒子背景（保留柔和配色粒子）
+            // ---- 粒子背景（极简柔和） ----
             const canvas = document.getElementById('particle-canvas');
             const ctx = canvas.getContext('2d');
             let width, height;
             let particles = [];
-            const mouse = { x: null, y: null, radius: 100 };
+            const mouse = { x: null, y: null, radius: 80 };
 
-            const colors = ['rgba(201,169,98,0.8)', 'rgba(139,122,166,0.8)', 'rgba(107,158,154,0.8)', 
-                             'rgba(180,160,150,0.7)', 'rgba(150,140,170,0.7)'];
+            // 低饱和度雪松色系
+            const colors = [
+                'rgba(115,138,124,0.45)',  // 雪松绿
+                'rgba(176,168,192,0.45)',  // 薄雾紫
+                'rgba(154,174,196,0.45)',  // 灰蓝
+                'rgba(200,200,210,0.4)',
+                'rgba(140,150,160,0.4)'
+            ];
 
             class Particle {
                 constructor(x, y) {
                     this.x = x || Math.random() * width;
                     this.y = y || Math.random() * height;
-                    this.size = Math.random() * 2.2 + 0.8;
-                    this.speedX = (Math.random() - 0.5) * 0.7;
-                    this.speedY = (Math.random() - 0.5) * 0.7;
+                    this.size = Math.random() * 2 + 0.6;
+                    this.speedX = (Math.random() - 0.5) * 0.5;
+                    this.speedY = (Math.random() - 0.5) * 0.5;
                     this.color = colors[Math.floor(Math.random() * colors.length)];
-                    this.opacity = Math.random() * 0.4 + 0.2;
+                    this.opacity = Math.random() * 0.3 + 0.15;
                 }
                 update() {
                     if (mouse.x && mouse.y) {
@@ -534,16 +606,16 @@
                         const dist = Math.sqrt(dx * dx + dy * dy);
                         if (dist < mouse.radius) {
                             const force = (mouse.radius - dist) / mouse.radius;
-                            this.speedX += dx * force * 0.002;
-                            this.speedY += dy * force * 0.002;
+                            this.speedX += dx * force * 0.001;
+                            this.speedY += dy * force * 0.001;
                         }
                     }
                     this.x += this.speedX;
                     this.y += this.speedY;
                     this.speedX *= 0.999;
                     this.speedY *= 0.999;
-                    if (this.x < 0 || this.x > width) this.speedX *= -0.6;
-                    if (this.y < 0 || this.y > height) this.speedY *= -0.6;
+                    if (this.x < 0 || this.x > width) this.speedX *= -0.5;
+                    if (this.y < 0 || this.y > height) this.speedY *= -0.5;
                     this.x = Math.max(0, Math.min(width, this.x));
                     this.y = Math.max(0, Math.min(height, this.y));
                 }
@@ -561,8 +633,9 @@
                 particles = [];
                 for (let i = 0; i < count; i++) particles.push(new Particle());
             }
+
             function connect() {
-                const maxDist = 110;
+                const maxDist = 100;
                 for (let a = 0; a < particles.length; a++) {
                     for (let b = a + 1; b < particles.length; b++) {
                         const dx = particles[a].x - particles[b].x;
@@ -570,8 +643,8 @@
                         const dist = Math.sqrt(dx * dx + dy * dy);
                         if (dist < maxDist) {
                             ctx.beginPath();
-                            ctx.strokeStyle = 'rgba(180,160,140,0.12)';
-                            ctx.lineWidth = 0.5 * (1 - dist/maxDist);
+                            ctx.strokeStyle = 'rgba(154,174,196,0.1)';
+                            ctx.lineWidth = 0.4 * (1 - dist/maxDist);
                             ctx.moveTo(particles[a].x, particles[a].y);
                             ctx.lineTo(particles[b].x, particles[b].y);
                             ctx.stroke();
@@ -579,92 +652,58 @@
                     }
                 }
             }
+
             function animate() {
                 ctx.clearRect(0, 0, width, height);
                 for (let p of particles) { p.update(); p.draw(); }
                 connect();
                 requestAnimationFrame(animate);
             }
+
             function resize() {
                 width = window.innerWidth;
                 height = window.innerHeight;
                 canvas.width = width;
                 canvas.height = height;
             }
+
             window.addEventListener('resize', () => {
                 resize();
-                init(Math.floor(width * height / 14000));
+                init(Math.floor(width * height / 16000));
             });
             window.addEventListener('mousemove', (e) => {
                 mouse.x = e.clientX;
                 mouse.y = e.clientY;
             });
-            window.addEventListener('mouseout', () => { mouse.x = null; mouse.y = null; });
+            window.addEventListener('mouseout', () => {
+                mouse.x = null;
+                mouse.y = null;
+            });
             window.addEventListener('touchmove', (e) => {
                 mouse.x = e.touches[0].clientX;
                 mouse.y = e.touches[0].clientY;
             }, { passive: true });
-            window.addEventListener('touchend', () => { mouse.x = null; mouse.y = null; });
+            window.addEventListener('touchend', () => {
+                mouse.x = null;
+                mouse.y = null;
+            });
+
             resize();
-            init(Math.floor(width * height / 14000));
+            init(Math.floor(width * height / 16000));
             animate();
 
-            // 自动缓慢滚动功能
-            const mainContent = document.getElementById('mainContent');
-            const btnAutoScroll = document.getElementById('btnAutoScroll');
-            const btnScrollTop = document.getElementById('btnScrollTop');
-            let autoScrollInterval = null;
-            let autoScrollActive = false;
-
-            function startAutoScroll() {
-                if (autoScrollInterval) return;
-                autoScrollActive = true;
-                btnAutoScroll.classList.add('active');
-                autoScrollInterval = setInterval(() => {
-                    // 如果用户已经滚动到底部，则回到顶部重新开始
-                    if (mainContent.scrollTop + mainContent.clientHeight >= mainContent.scrollHeight - 5) {
-                        mainContent.scrollTo({ top: 0, behavior: 'smooth' });
-                    } else {
-                        mainContent.scrollBy({ top: 1, behavior: 'smooth' });
-                    }
-                }, 80); // 每80ms滚动1px，速度缓慢
-            }
-
-            function stopAutoScroll() {
-                if (autoScrollInterval) {
-                    clearInterval(autoScrollInterval);
-                    autoScrollInterval = null;
-                }
-                autoScrollActive = false;
-                btnAutoScroll.classList.remove('active');
-            }
-
-            // 切换自动滚动
-            btnAutoScroll.addEventListener('click', () => {
-                if (autoScrollActive) {
-                    stopAutoScroll();
-                } else {
-                    startAutoScroll();
-                }
+            // ---- 回到顶部按钮 ----
+            const btn = document.getElementById('backToTop');
+            window.addEventListener('scroll', () => {
+                btn.style.display = window.scrollY > 500 ? 'flex' : 'none';
             });
-
-            // 用户手动滚动时暂停自动滚动
-            mainContent.addEventListener('wheel', () => {
-                if (autoScrollActive) stopAutoScroll();
+            btn.style.display = 'none';
+            btn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             });
-            mainContent.addEventListener('touchmove', () => {
-                if (autoScrollActive) stopAutoScroll();
-            }, { passive: true });
-
-            // 回到顶部按钮
-            btnScrollTop.addEventListener('click', () => {
-                mainContent.scrollTo({ top: 0, behavior: 'smooth' });
-                if (autoScrollActive) stopAutoScroll();
-            });
-
-            // 初始不自动滚动，用户可按按钮启动
         })();
     </script>
 </body>
+</html>
 </html>
 </html>
