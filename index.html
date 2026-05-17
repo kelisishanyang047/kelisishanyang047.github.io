@@ -3,29 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alex Chen · 日落沙丘</title>
+    <title>Alex Chen · 雾岛花茶</title>
     <style>
         :root {
-            --bg-gradient-start: #f3efe3;
-            --bg-gradient-end: #ece4d5;
-            --left-bg: #f1e4d4;
-            --card-bg: #fffcf5;
-            --text-primary: #4a3f35;
-            --text-secondary: #8d7b6c;
-            --accent-terracotta: #c17e60;
-            --accent-olive: #8e9b7a;
-            --shadow-card: 0 2px 10px rgba(0,0,0,0.04);
+            --bg-page: linear-gradient(170deg, #faf6f0 0%, #fdf6f9 100%);
+            --card-bg: #fffaf5;
+            --text-primary: #4e423a;
+            --text-secondary: #8f8178;
+            --accent-pink: #d9b4b4;
+            --accent-green: #9bbaab;
+            --shadow-card: 0 2px 12px rgba(0,0,0,0.03);
+            --shadow-hover: 0 6px 20px rgba(0,0,0,0.05);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            background: var(--bg-page);
             color: var(--text-primary);
-            overflow: hidden;
-            height: 100vh;
+            line-height: 1.6;
+            min-height: 100vh;
             position: relative;
+            overflow-x: hidden;
         }
 
         #particle-canvas {
@@ -36,170 +36,144 @@
             height: 100%;
             z-index: 0;
             pointer-events: none;
-            opacity: 0.5;
+            opacity: 0.55;
         }
 
-        .layout {
+        .container {
             position: relative;
             z-index: 1;
-            display: flex;
-            height: 100vh;
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
-            box-shadow: 0 0 40px rgba(0,0,0,0.05);
+            padding: 2.5rem 1.5rem 3rem;
         }
 
-        /* ---- 左侧个人信息栏 (35%) ---- */
-        .sidebar {
-            width: 35%;
-            min-width: 280px;
-            background: var(--left-bg);
-            padding: 3.5rem 2rem 2.5rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow-y: auto;
-            border-right: 1px solid rgba(193, 126, 96, 0.2);
-        }
-
-        .name-vertical {
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
-            font-size: 3.2rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            letter-spacing: 6px;
-            margin-bottom: 2rem;
-            line-height: 1.2;
-            height: auto;
-            font-family: 'Noto Serif SC', 'Times New Roman', serif;
-        }
-
-        .sidebar .subtitle {
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 3px;
+        /* ---- 个人信息大卡片（左上方全宽） ---- */
+        .profile-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 2.8rem 3rem;
             margin-bottom: 2.5rem;
-            text-align: center;
-            font-weight: 500;
-        }
-
-        .sidebar .bio {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            text-align: center;
-            line-height: 1.7;
-            margin-bottom: 2.5rem;
-            max-width: 200px;
-        }
-
-        .contact-items {
-            display: flex;
-            flex-direction: column;
-            gap: 1.2rem;
-            margin-bottom: 2.5rem;
-            width: 100%;
-            align-items: center;
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.3s;
-            border-bottom: none;
-        }
-        .contact-item:hover { color: var(--accent-terracotta); }
-
-        /* 纵向技能标签 */
-        .skill-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.7rem;
-            align-items: center;
-        }
-
-        .skill-tag {
-            background: rgba(193, 126, 96, 0.08);
-            border: 1px solid rgba(193, 126, 96, 0.25);
-            color: #8d6b5a;
-            padding: 0.35rem 1.4rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            transition: 0.25s;
-            text-align: center;
-            width: fit-content;
-        }
-        .skill-tag:hover {
-            background: var(--accent-terracotta);
-            color: white;
-            border-color: var(--accent-terracotta);
-            transform: translateX(3px);
-        }
-
-        /* ---- 右侧卡片区域 (65%) ---- */
-        .main-content {
-            width: 65%;
-            overflow-y: auto;
-            overflow-x: hidden;
-            background: rgba(255,255,255,0.3);
-            padding: 2.5rem 2rem 3rem;
+            box-shadow: var(--shadow-card), 0 0 30px rgba(217,180,180,0.15);
+            position: relative;
+            overflow: hidden;
             display: flex;
             flex-wrap: wrap;
+            align-items: center;
+            gap: 2rem;
+            /* 浅色花纹边框 */
+            border: 1px solid rgba(217,180,180,0.4);
+        }
+
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle, rgba(217,180,180,0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .profile-card .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f5e7e7, #e8d5d5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8rem;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 16px rgba(217,180,180,0.3);
+            flex-shrink: 0;
+        }
+
+        .profile-info h1 {
+            font-size: 2.4rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.3rem;
+            letter-spacing: -0.5px;
+        }
+
+        .profile-info .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        .profile-info .bio {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            max-width: 500px;
+        }
+
+        .profile-info .contact-links {
+            display: flex;
             gap: 1.5rem;
-            align-content: flex-start;
+            margin-top: 1.2rem;
+            flex-wrap: wrap;
         }
 
-        /* 卡片通用 */
-        .card {
+        .profile-info .contact-links a {
+            color: var(--accent-green);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.3s, color 0.3s;
+        }
+        .profile-info .contact-links a:hover {
+            color: var(--accent-pink);
+            border-bottom-color: var(--accent-pink);
+        }
+
+        /* ---- 瀑布流容器 ---- */
+        .masonry-container {
+            display: flex;
+            gap: 1.8rem;
+            align-items: flex-start;
+        }
+
+        .masonry-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1.8rem;
+        }
+
+        /* 通用卡片样式 */
+        .masonry-card {
             background: var(--card-bg);
-            border-radius: 12px;
-            padding: 1.8rem;
+            border-radius: 16px;
+            padding: 1.8rem 2rem;
             box-shadow: var(--shadow-card);
-            transition: transform 0.25s, box-shadow 0.3s;
+            transition: transform 0.25s ease, box-shadow 0.3s ease;
+            position: relative;
+            /* 单侧渐变光晕（底部） */
             border-bottom: 3px solid transparent;
-            flex-grow: 1;
+            border-image: linear-gradient(to right, rgba(217,180,180,0.5), rgba(155,186,171,0.5)) 1;
         }
 
-        .card:hover {
+        .masonry-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            box-shadow: var(--shadow-hover), 0 0 20px rgba(217,180,180,0.1);
         }
 
-        /* 全宽卡片 */
-        .card.full {
-            width: 100%;
-            flex-basis: 100%;
-        }
-
-        /* 半宽卡片 */
-        .card.half {
-            width: calc(50% - 0.75rem);
-            flex-basis: calc(50% - 0.75rem);
-        }
-
-        /* 底部色条交替 */
-        .card:nth-child(1) { border-bottom-color: var(--accent-terracotta); }
-        .card:nth-child(2) { border-bottom-color: var(--accent-olive); }
-        .card:nth-child(3) { border-bottom-color: var(--accent-terracotta); }
-        .card:nth-child(4) { border-bottom-color: var(--accent-olive); }
-        .card:nth-child(5) { border-bottom-color: var(--accent-terracotta); }
-        .card:nth-child(6) { border-bottom-color: var(--accent-olive); }
-
-        .card h2 {
+        .masonry-card h2 {
             font-size: 1.5rem;
             font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: 1.2rem;
+            margin-bottom: 1rem;
             display: flex;
             align-items: center;
             gap: 0.4rem;
-            border-bottom: 1px solid rgba(141, 123, 108, 0.2);
+            border-bottom: 1px solid rgba(155,186,171,0.3);
             padding-bottom: 0.5rem;
         }
 
@@ -222,68 +196,93 @@
         }
 
         .item p, .item ul {
-            color: #5a4e44;
+            color: #5a5048;
             line-height: 1.7;
         }
 
         ul { list-style: none; padding-left: 0; }
         ul li::before {
-            content: '▹';
-            color: var(--accent-terracotta);
+            content: '❀';
+            color: var(--accent-pink);
             margin-right: 0.5rem;
+            font-size: 0.8rem;
         }
 
         a {
-            color: var(--accent-terracotta);
+            color: var(--accent-green);
             text-decoration: none;
+            font-weight: 500;
             border-bottom: 1px solid transparent;
-            transition: border-color 0.3s;
+            transition: border-color 0.3s, color 0.3s;
         }
-        a:hover { border-bottom-color: var(--accent-terracotta); }
+        a:hover {
+            color: var(--accent-pink);
+            border-bottom-color: var(--accent-pink);
+        }
 
-        /* 底部额外链接区（全宽） */
-        .card.contact-card {
-            border-bottom-color: var(--accent-olive);
+        /* 技能标签（雾岛风格） */
+        .skill-tag {
+            display: inline-block;
+            background: rgba(155,186,171,0.1);
+            border: 1px solid rgba(155,186,171,0.3);
+            color: #5d7e6e;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin: 0.25rem;
+            transition: 0.25s;
+        }
+        .skill-tag:hover {
+            background: var(--accent-green);
+            color: white;
+            border-color: var(--accent-green);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(155,186,171,0.3);
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 10;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: white;
+            border: 1px solid rgba(155,186,171,0.4);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: var(--text-secondary);
+            transition: 0.3s;
+            opacity: 0.8;
+        }
+        .back-to-top:hover {
+            background: var(--accent-green);
+            color: white;
+            opacity: 1;
+            border-color: var(--accent-green);
+            transform: translateY(-2px);
         }
 
         /* 响应式 */
-        @media (max-width: 800px) {
-            .layout {
+        @media (max-width: 700px) {
+            .profile-card {
                 flex-direction: column;
-                height: auto;
-                overflow: auto;
-            }
-            .sidebar {
-                width: 100%;
-                min-width: unset;
-                padding: 2rem 1.5rem;
-                border-right: none;
-                border-bottom: 1px solid rgba(193, 126, 96, 0.2);
-                flex-direction: row;
-                flex-wrap: wrap;
-                justify-content: center;
-                align-items: center;
                 text-align: center;
             }
-            .name-vertical {
-                writing-mode: horizontal-tb;
-                font-size: 2.2rem;
-                letter-spacing: 2px;
-                margin-bottom: 0.5rem;
-                width: 100%;
+            .profile-info .contact-links {
+                justify-content: center;
             }
-            .sidebar .subtitle { width: 100%; margin-bottom: 1rem; }
-            .sidebar .bio { width: 100%; max-width: none; margin-bottom: 1.5rem; }
-            .contact-items { flex-direction: row; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; width: 100%; justify-content: center; }
-            .skill-list { flex-direction: row; flex-wrap: wrap; justify-content: center; }
-            .main-content {
-                width: 100%;
-                padding: 1.5rem;
-                flex-wrap: wrap;
+            .masonry-container {
+                flex-direction: column;
             }
-            .card.half {
+            .masonry-column {
                 width: 100%;
-                flex-basis: 100%;
             }
         }
     </style>
@@ -291,33 +290,34 @@
 <body>
     <canvas id="particle-canvas"></canvas>
 
-    <div class="layout">
-        <!-- 左侧个人信息 -->
-        <aside class="sidebar">
-            <div class="name-vertical">陈 信</div>
-            <div class="subtitle">全栈开发 & AI 研究员</div>
-            <p class="bio">在沙丘与落日之间，构建温暖而坚实的数字世界。</p>
-            <div class="contact-items">
-                <a href="mailto:alex.chen@example.com" class="contact-item">✉️ alex.chen@example.com</a>
-                <a href="https://alexchen.dev" target="_blank" class="contact-item">🌐 alexchen.dev</a>
-                <a href="https://linkedin.com/in/alexchen" target="_blank" class="contact-item">💼 LinkedIn</a>
+    <div class="container">
+        <!-- 个人信息大卡片 -->
+        <div class="profile-card">
+            <div class="avatar">A</div>
+            <div class="profile-info">
+                <h1>Alex Chen</h1>
+                <div class="subtitle">全栈开发 & AI 研究员</div>
+                <p class="bio">
+                    在茶与代码的香气中寻找平衡，将复杂系统转化为优雅的交互体验。
+                </p>
+                <div class="contact-links">
+                    <a href="mailto:alex.chen@example.com">✉️ alex.chen@example.com</a>
+                    <a href="https://alexchen.dev" target="_blank">🌐 alexchen.dev</a>
+                    <a href="https://linkedin.com/in/alexchen" target="_blank">💼 LinkedIn</a>
+                </div>
             </div>
-            <div class="skill-list">
-                <span class="skill-tag">TypeScript</span>
-                <span class="skill-tag">React</span>
-                <span class="skill-tag">Vue</span>
-                <span class="skill-tag">Python</span>
-                <span class="skill-tag">PyTorch</span>
-                <span class="skill-tag">Docker</span>
-                <span class="skill-tag">AWS</span>
-                <span class="skill-tag">LangChain</span>
-            </div>
-        </aside>
+        </div>
 
-        <!-- 右侧可滚动卡片 -->
-        <main class="main-content">
-            <!-- 教育经历：全宽 -->
-            <section class="card full">
+        <!-- 瀑布流区域（由JS动态分配卡片） -->
+        <div class="masonry-container" id="masonryContainer">
+            <div class="masonry-column" id="colLeft"></div>
+            <div class="masonry-column" id="colRight"></div>
+        </div>
+
+        <!-- 隐藏的卡片模板，将被JS处理 -->
+        <div style="display:none;" id="cardTemplates">
+            <!-- 教育卡片 -->
+            <div class="masonry-card" data-card>
                 <h2>📚 教育经历</h2>
                 <div class="item">
                     <h3>计算机科学 硕士</h3>
@@ -327,12 +327,11 @@
                 <div class="item">
                     <h3>软件工程 学士</h3>
                     <div class="meta">国立信息大学 · 2018 - 2022</div>
-                    <p>核心课程：数据结构、算法设计、操作系统。毕业设计获最佳创新奖。</p>
+                    <p>核心课程：数据结构、算法设计。毕业设计获最佳创新奖。</p>
                 </div>
-            </section>
-
-            <!-- 工作经历：全宽 -->
-            <section class="card full">
+            </div>
+            <!-- 工作卡片 -->
+            <div class="masonry-card" data-card>
                 <h2>💼 工作经历</h2>
                 <div class="item">
                     <h3>前端架构师 · 星河科技</h3>
@@ -346,28 +345,42 @@
                     <h3>实习生 · 未来智能</h3>
                     <div class="meta">2022.07 - 2023.04</div>
                     <ul>
-                        <li>AI对话系统前端开发，流式响应</li>
+                        <li>AI对话系统前端，流式响应</li>
                         <li>Vue3组件库，测试覆盖率85%</li>
                     </ul>
                 </div>
-            </section>
-
-            <!-- 项目与发表：各半宽 -->
-            <section class="card half">
-                <h2>🚀 项目</h2>
+            </div>
+            <!-- 项目卡片 -->
+            <div class="masonry-card" data-card>
+                <h2>🚀 精选项目</h2>
                 <div class="item">
                     <h3>Neural Canvas</h3>
-                    <div class="meta"><a href="https://github.com/example/neural-canvas" target="_blank">GitHub ↗</a> · ⭐ 2.3k</div>
+                    <div class="meta"><a href="#">GitHub ↗</a> · ⭐ 2.3k</div>
                     <p>神经网络交互绘图工具，手势生成矢量图形。</p>
                 </div>
                 <div class="item">
                     <h3>CodeSync</h3>
-                    <div class="meta"><a href="https://codesync.dev" target="_blank">codesync.dev ↗</a></div>
+                    <div class="meta"><a href="#">codesync.dev ↗</a></div>
                     <p>实时协作代码编辑器，黑客马拉松冠军。</p>
                 </div>
-            </section>
-
-            <section class="card half">
+            </div>
+            <!-- 技能卡片 -->
+            <div class="masonry-card" data-card>
+                <h2>⚡ 技术栈</h2>
+                <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+                    <span class="skill-tag">TypeScript</span>
+                    <span class="skill-tag">React</span>
+                    <span class="skill-tag">Vue</span>
+                    <span class="skill-tag">Node.js</span>
+                    <span class="skill-tag">Python</span>
+                    <span class="skill-tag">PyTorch</span>
+                    <span class="skill-tag">Docker</span>
+                    <span class="skill-tag">AWS</span>
+                    <span class="skill-tag">LangChain</span>
+                </div>
+            </div>
+            <!-- 发表卡片 -->
+            <div class="masonry-card" data-card>
                 <h2>📄 学术发表</h2>
                 <div class="item">
                     <h3>Self-Critique Prompting</h3>
@@ -379,20 +392,15 @@
                     <div class="meta">NeurIPS 2023 Workshop</div>
                     <p>移动端友好注意力机制，降低70%内存。</p>
                 </div>
-            </section>
-
-            <!-- 联系方式卡片（全宽，底部） -->
-            <section class="card full contact-card">
-                <h2>📬 期待联系</h2>
-                <p style="text-align:center; color: var(--text-secondary);">
-                    欢迎通过邮件或社交平台与我交流。
-                </p>
-            </section>
-        </main>
+            </div>
+        </div>
     </div>
+
+    <button class="back-to-top" id="backToTop" title="回到顶部" style="display:none;">↑</button>
 
     <script>
         (() => {
+            // ---- 粒子背景 ----
             const canvas = document.getElementById('particle-canvas');
             const ctx = canvas.getContext('2d');
             let width, height;
@@ -400,11 +408,11 @@
             const mouse = { x: null, y: null, radius: 80 };
 
             const colors = [
-                'rgba(193,126,96,0.45)',
-                'rgba(142,155,122,0.45)',
-                'rgba(210,190,170,0.4)',
-                'rgba(180,160,140,0.4)',
-                'rgba(200,150,120,0.35)'
+                'rgba(217,180,180,0.5)',
+                'rgba(155,186,171,0.5)',
+                'rgba(210,190,170,0.45)',
+                'rgba(200,170,160,0.4)',
+                'rgba(180,190,170,0.4)'
             ];
 
             class Particle {
@@ -412,8 +420,8 @@
                     this.x = x || Math.random() * width;
                     this.y = y || Math.random() * height;
                     this.size = Math.random() * 2.5 + 0.8;
-                    this.speedX = (Math.random() - 0.5) * 0.6;
-                    this.speedY = (Math.random() - 0.5) * 0.6;
+                    this.speedX = (Math.random() - 0.5) * 0.5;
+                    this.speedY = (Math.random() - 0.5) * 0.5;
                     this.color = colors[Math.floor(Math.random() * colors.length)];
                     this.opacity = Math.random() * 0.4 + 0.15;
                 }
@@ -430,8 +438,8 @@
                     }
                     this.x += this.speedX;
                     this.y += this.speedY;
-                    this.speedX *= 0.999;
-                    this.speedY *= 0.999;
+                    this.speedX *= 0.9995;
+                    this.speedY *= 0.9995;
                     if (this.x < 0 || this.x > width) this.speedX *= -0.5;
                     if (this.y < 0 || this.y > height) this.speedY *= -0.5;
                     this.x = Math.max(0, Math.min(width, this.x));
@@ -447,7 +455,7 @@
                 }
             }
 
-            function init(count) {
+            function initParticles(count) {
                 particles = [];
                 for (let i = 0; i < count; i++) particles.push(new Particle());
             }
@@ -461,7 +469,7 @@
                         const dist = Math.sqrt(dx * dx + dy * dy);
                         if (dist < maxDist) {
                             ctx.beginPath();
-                            ctx.strokeStyle = 'rgba(193,126,96,0.1)';
+                            ctx.strokeStyle = 'rgba(217,180,180,0.1)';
                             ctx.lineWidth = 0.5 * (1 - dist/maxDist);
                             ctx.moveTo(particles[a].x, particles[a].y);
                             ctx.lineTo(particles[b].x, particles[b].y);
@@ -471,14 +479,14 @@
                 }
             }
 
-            function animate() {
+            function animateParticles() {
                 ctx.clearRect(0, 0, width, height);
                 for (let p of particles) { p.update(); p.draw(); }
                 connect();
-                requestAnimationFrame(animate);
+                requestAnimationFrame(animateParticles);
             }
 
-            function resize() {
+            function resizeCanvas() {
                 width = window.innerWidth;
                 height = window.innerHeight;
                 canvas.width = width;
@@ -486,8 +494,8 @@
             }
 
             window.addEventListener('resize', () => {
-                resize();
-                init(Math.floor(width * height / 16000));
+                resizeCanvas();
+                initParticles(Math.floor(width * height / 17000));
             });
             window.addEventListener('mousemove', e => {
                 mouse.x = e.clientX;
@@ -500,9 +508,56 @@
             }, { passive: true });
             window.addEventListener('touchend', () => { mouse.x = null; mouse.y = null; });
 
-            resize();
-            init(Math.floor(width * height / 16000));
-            animate();
+            resizeCanvas();
+            initParticles(Math.floor(width * height / 17000));
+            animateParticles();
+
+            // ---- 瀑布流布局 ----
+            const colLeft = document.getElementById('colLeft');
+            const colRight = document.getElementById('colRight');
+            const templates = document.querySelectorAll('#cardTemplates [data-card]');
+
+            function placeCards() {
+                // 清空列
+                colLeft.innerHTML = '';
+                colRight.innerHTML = '';
+
+                // 将卡片转换为实际DOM元素
+                const cards = Array.from(templates).map(tpl => tpl.cloneNode(true));
+                // 随机打乱卡片顺序可以增加变化，但通常保持原有顺序
+                // 这里保持顺序
+                cards.forEach(card => {
+                    // 暂存到临时容器以测量高度
+                    const temp = document.createElement('div');
+                    temp.style.position = 'absolute';
+                    temp.style.visibility = 'hidden';
+                    temp.style.width = colLeft.clientWidth + 'px'; // 假设列宽一样
+                    temp.appendChild(card);
+                    document.body.appendChild(temp);
+                    const cardHeight = temp.offsetHeight;
+                    document.body.removeChild(temp);
+
+                    // 添加到较短的列
+                    if (colLeft.offsetHeight <= colRight.offsetHeight) {
+                        colLeft.appendChild(card);
+                    } else {
+                        colRight.appendChild(card);
+                    }
+                });
+            }
+
+            // 初始布局
+            placeCards();
+            window.addEventListener('resize', placeCards);
+
+            // ---- 回到顶部按钮 ----
+            const btn = document.getElementById('backToTop');
+            window.addEventListener('scroll', () => {
+                btn.style.display = window.scrollY > 400 ? 'flex' : 'none';
+            });
+            btn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
         })();
     </script>
 </body>
