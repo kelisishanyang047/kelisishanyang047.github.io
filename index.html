@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alex Chen · 星轨</title>
+    <title>Alex Chen · 光影阶梯</title>
     <style>
         :root {
-            --bg-page: #f5f4f2;
-            --text-primary: #2f333a;
-            --text-secondary: #5a5e66;
-            --accent-blue: #6b88c6;
-            --accent-orange: #f3a261;
-            --accent-silver: #ecebe8;
-            --card-bg: rgba(255,255,255,0.7);
-            --shadow-card: 0 4px 20px rgba(0,0,0,0.04);
+            --bg-page: #fefbf5;
+            --card-bg: #f4f2ed;
+            --text-primary: #383a40;
+            --text-secondary: #5e6068;
+            --accent-yellow: #f3d07f;
+            --line-color: #d8d6d1;
+            --shadow-card: 0 2px 8px rgba(0,0,0,0.04);
+            --shadow-hover: 0 8px 24px rgba(0,0,0,0.06);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -22,15 +22,14 @@
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             background: var(--bg-page);
             color: var(--text-primary);
+            line-height: 1.6;
             min-height: 100vh;
             display: flex;
-            align-items: center;
-            justify-content: center;
+            flex-direction: column;
             position: relative;
-            overflow-x: hidden;
         }
 
-        /* 星轨粒子背景 */
+        /* 粒子背景 */
         #particle-canvas {
             position: fixed;
             top: 0;
@@ -39,249 +38,215 @@
             height: 100%;
             z-index: 0;
             pointer-events: none;
-            opacity: 0.6;
+            opacity: 0.4;
         }
 
-        /* 轨道螺旋 SVG 背景 */
-        .spiral-bg {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 900px;
-            height: 900px;
-            z-index: 0;
-            opacity: 0.25;
-            pointer-events: none;
+        /* 顶部固定导航（个人信息） */
+        .top-bar {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: rgba(254, 251, 245, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--line-color);
+            padding: 1rem 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
         }
 
-        .main-container {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            max-width: 1000px;
-            min-height: 700px;
+        .top-bar .info {
             display: flex;
             align-items: center;
-            justify-content: center;
-            padding: 2rem;
+            gap: 2rem;
+            flex-wrap: wrap;
         }
 
-        /* 星心（中心个人信息） */
-        .star-core {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            z-index: 2;
-            background: rgba(255,255,255,0.85);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border-radius: 50%;
-            width: 200px;
-            height: 200px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 40px rgba(107,136,198,0.25), 0 0 80px rgba(107,136,198,0.1);
-            border: 2px solid rgba(107,136,198,0.4);
-            animation: core-glow 3s infinite alternate;
-        }
-
-        @keyframes core-glow {
-            from { box-shadow: 0 0 30px rgba(107,136,198,0.2), 0 0 60px rgba(107,136,198,0.08); }
-            to { box-shadow: 0 0 50px rgba(107,136,198,0.4), 0 0 100px rgba(107,136,198,0.15); }
-        }
-
-        .star-core .avatar {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #a3b8e8, #6b88c6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: white;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-
-        .star-core h1 {
-            font-size: 1.5rem;
+        .top-bar h1 {
+            font-size: 1.6rem;
             font-weight: 700;
             color: var(--text-primary);
-            margin-bottom: 0.2rem;
+            letter-spacing: -0.3px;
         }
 
-        .star-core .subtitle {
-            font-size: 0.8rem;
+        .top-bar .subtitle {
+            font-size: 0.95rem;
             color: var(--text-secondary);
+            border-left: 2px solid var(--accent-yellow);
+            padding-left: 1rem;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        /* 环绕的轨道卡片 */
-        .orbit-card {
-            position: absolute;
-            background: var(--card-bg);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            border-radius: 16px;
-            padding: 1.5rem 1.8rem;
-            width: 280px;
-            box-shadow: var(--shadow-card);
-            border: 1px solid rgba(107,136,198,0.15);
-            transition: all 0.3s ease;
+        .top-bar .contact-mini {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .top-bar .contact-mini a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+            border-bottom: 1px solid transparent;
+        }
+        .top-bar .contact-mini a:hover {
+            color: var(--accent-yellow);
+            border-bottom-color: var(--accent-yellow);
+        }
+
+        /* 主体阶梯区域 */
+        .main-stairs {
+            position: relative;
             z-index: 1;
-            /* 默认隐藏，通过 JS 或特定类显示 */
+            flex: 1;
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
         }
 
-        .orbit-card:hover {
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
-            border-color: rgba(107,136,198,0.4);
-            z-index: 5;
+        /* 阶梯卡片 */
+        .stair-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem 2.5rem;
+            width: 80%;
+            box-shadow: var(--shadow-card);
+            transition: transform 0.25s, box-shadow 0.3s;
+            position: relative;
         }
 
-        .orbit-card h2 {
-            font-size: 1.2rem;
-            color: var(--accent-blue);
-            margin-bottom: 0.8rem;
-            border-bottom: 1px solid var(--accent-silver);
-            padding-bottom: 0.4rem;
+        /* 奇数卡片左对齐，偶数右对齐 */
+        .stair-card:nth-child(odd) {
+            align-self: flex-start;
+            border-left: 4px solid var(--accent-yellow);
+        }
+
+        .stair-card:nth-child(even) {
+            align-self: flex-end;
+            border-right: 4px solid var(--accent-yellow);
+        }
+
+        .stair-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover), 0 0 20px rgba(243, 208, 127, 0.2);
+        }
+
+        .stair-card h2 {
+            font-size: 1.5rem;
+            font-weight: 650;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
             display: flex;
             align-items: center;
-            gap: 0.3rem;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--line-color);
+            padding-bottom: 0.5rem;
         }
 
         .item {
-            margin-bottom: 0.8rem;
+            margin-bottom: 1.2rem;
+            padding-left: 1rem;
+            border-left: 2px solid transparent;
+            transition: border-color 0.3s;
         }
+        .item:hover { border-left-color: var(--accent-yellow); }
         .item:last-child { margin-bottom: 0; }
 
         .item h3 {
-            font-size: 0.95rem;
+            font-size: 1.15rem;
             color: var(--text-primary);
-            margin-bottom: 0.1rem;
+            margin-bottom: 0.2rem;
         }
 
         .item .meta {
-            font-size: 0.75rem;
+            font-size: 0.88rem;
             color: var(--text-secondary);
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.5rem;
             font-style: italic;
         }
 
         .item p, .item ul {
-            font-size: 0.85rem;
-            color: #4a4e55;
-            line-height: 1.5;
+            color: #4a4d55;
+            line-height: 1.7;
         }
 
         ul { list-style: none; padding-left: 0; }
         ul li::before {
-            content: '◉';
-            color: var(--accent-orange);
-            margin-right: 0.4rem;
-            font-size: 0.7rem;
+            content: '▹';
+            color: var(--accent-yellow);
+            margin-right: 0.5rem;
         }
 
         a {
-            color: var(--accent-blue);
+            color: #b69b4e;
             text-decoration: none;
+            font-weight: 500;
             border-bottom: 1px solid transparent;
-            transition: border-color 0.3s;
+            transition: border-color 0.3s, color 0.3s;
         }
         a:hover {
-            color: var(--accent-orange);
-            border-bottom-color: var(--accent-orange);
+            color: #8b7535;
+            border-bottom-color: var(--accent-yellow);
         }
 
-        /* 技能标签（放入中心附近或单独卡片） */
+        /* 技能标签 */
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 0.5rem;
+        }
+
         .skill-tag {
-            display: inline-block;
-            background: rgba(107,136,198,0.1);
-            border: 1px solid rgba(107,136,198,0.3);
-            color: #4e5a7a;
-            padding: 0.2rem 0.8rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            margin: 0.2rem;
+            background: rgba(243, 208, 127, 0.15);
+            border: 1px solid rgba(243, 208, 127, 0.5);
+            color: #7d6b3a;
+            padding: 0.25rem 1.1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
             transition: 0.2s;
         }
         .skill-tag:hover {
-            background: var(--accent-blue);
-            color: white;
-            border-color: var(--accent-blue);
+            background: var(--accent-yellow);
+            color: #fff;
+            border-color: var(--accent-yellow);
+            transform: translateY(-1px);
         }
 
-        /* 联系方式（底部居中） */
-        .contact-footer {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 2;
-            display: flex;
-            gap: 2rem;
-            background: rgba(255,255,255,0.8);
-            backdrop-filter: blur(8px);
-            padding: 0.6rem 2rem;
-            border-radius: 40px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-            border: 1px solid var(--accent-silver);
-        }
-
-        .contact-footer a {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            font-weight: 500;
-            border-bottom: none;
-        }
-        .contact-footer a:hover {
-            color: var(--accent-orange);
-        }
-
-        /* 响应式：移动端变为纵向排列 */
-        @media (max-width: 900px) {
-            body {
-                align-items: flex-start;
-                overflow-y: auto;
-            }
-            .main-container {
-                flex-direction: column;
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .top-bar {
                 padding: 1rem;
-                min-height: auto;
+                flex-direction: column;
+                align-items: flex-start;
             }
-            .star-core {
-                position: relative;
-                transform: none;
-                top: auto;
-                left: auto;
-                margin: 2rem auto;
-                width: 160px;
-                height: 160px;
+            .top-bar .info {
+                flex-direction: column;
+                gap: 0.5rem;
             }
-            .orbit-card {
-                position: relative;
-                transform: none !important;
+            .top-bar .subtitle {
+                border-left: none;
+                padding-left: 0;
+            }
+            .main-stairs {
+                padding: 1.5rem 1rem;
+                gap: 1.5rem;
+            }
+            .stair-card {
                 width: 100%;
-                max-width: 400px;
-                margin: 0 auto 1.5rem;
-            }
-            .spiral-bg {
-                display: none;
-            }
-            .contact-footer {
-                position: relative;
-                bottom: auto;
-                left: auto;
-                transform: none;
-                margin: 1rem auto;
-                justify-content: center;
+                align-self: stretch !important;
+                border-left: 4px solid var(--accent-yellow) !important;
+                border-right: none !important;
             }
         }
     </style>
@@ -289,69 +254,76 @@
 <body>
     <canvas id="particle-canvas"></canvas>
 
-    <!-- 螺旋轨道 SVG -->
-    <svg class="spiral-bg" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
-        <path d="M400,400 Q300,200 500,150 T600,300 T350,500 T200,450 T250,300 T450,250 T550,350 T400,500" 
-              fill="none" stroke="#6b88c6" stroke-width="1.5" stroke-dasharray="6 6" opacity="0.4"/>
-        <circle cx="400" cy="400" r="120" fill="none" stroke="#f3a261" stroke-width="1" stroke-dasharray="4 6" opacity="0.5"/>
-        <circle cx="400" cy="400" r="220" fill="none" stroke="#6b88c6" stroke-width="0.8" stroke-dasharray="3 8" opacity="0.3"/>
-        <circle cx="400" cy="400" r="320" fill="none" stroke="#f3a261" stroke-width="0.8" stroke-dasharray="3 8" opacity="0.2"/>
-    </svg>
-
-    <div class="main-container">
-        <!-- 中心星心 -->
-        <div class="star-core">
-            <div class="avatar">A</div>
+    <!-- 顶部固定条 -->
+    <header class="top-bar">
+        <div class="info">
             <h1>Alex Chen</h1>
-            <div class="subtitle">全栈开发 & AI 研究员</div>
+            <span class="subtitle">全栈开发 & AI 研究员</span>
         </div>
+        <div class="contact-mini">
+            <a href="mailto:alex.chen@example.com">✉️ alex.chen@example.com</a>
+            <a href="https://alexchen.dev" target="_blank">🌐 alexchen.dev</a>
+            <a href="https://linkedin.com/in/alexchen" target="_blank">💼 LinkedIn</a>
+        </div>
+    </header>
 
-        <!-- 轨道卡片们（通过JS定位） -->
-        <div class="orbit-card" id="card1">
+    <!-- 阶梯卡片区 -->
+    <main class="main-stairs">
+        <!-- 教育经历（奇数，左对齐） -->
+        <section class="stair-card">
             <h2>📚 教育经历</h2>
             <div class="item">
                 <h3>计算机科学 硕士</h3>
-                <div class="meta">城市科技大学 · 2022-2025</div>
-                <p>大语言模型对齐，GPA 3.9/4.0。</p>
+                <div class="meta">城市科技大学 · 2022 - 2025</div>
+                <p>大语言模型对齐与可解释性，GPA 3.9/4.0，优秀毕业论文。</p>
             </div>
             <div class="item">
                 <h3>软件工程 学士</h3>
-                <div class="meta">国立信息大学 · 2018-2022</div>
-                <p>毕业设计获最佳创新奖。</p>
+                <div class="meta">国立信息大学 · 2018 - 2022</div>
+                <p>核心课程：数据结构、算法设计，毕业设计获最佳创新奖。</p>
             </div>
-        </div>
+        </section>
 
-        <div class="orbit-card" id="card2">
+        <!-- 工作经历（偶数，右对齐） -->
+        <section class="stair-card">
             <h2>💼 工作经历</h2>
             <div class="item">
                 <h3>前端架构师 · 星河科技</h3>
                 <div class="meta">2023.06 - 至今</div>
-                <ul><li>低代码平台架构，服务10万+开发者</li></ul>
+                <ul>
+                    <li>主导低代码平台前端架构，服务10万+开发者</li>
+                    <li>首屏加载性能优化40%，引入 WebAssembly</li>
+                </ul>
             </div>
             <div class="item">
                 <h3>实习生 · 未来智能</h3>
                 <div class="meta">2022.07 - 2023.04</div>
-                <ul><li>AI对话系统前端，Vue3组件库</li></ul>
+                <ul>
+                    <li>AI对话系统前端开发，实现流式响应</li>
+                    <li>Vue3组件库，测试覆盖率85%</li>
+                </ul>
             </div>
-        </div>
+        </section>
 
-        <div class="orbit-card" id="card3">
+        <!-- 精选项目（奇数） -->
+        <section class="stair-card">
             <h2>🚀 精选项目</h2>
             <div class="item">
                 <h3>Neural Canvas</h3>
-                <div class="meta"><a href="#">GitHub ↗</a> · ⭐ 2.3k</div>
-                <p>神经网络绘图工具。</p>
+                <div class="meta"><a href="https://github.com/example/neural-canvas" target="_blank">GitHub ↗</a> · ⭐ 2.3k</div>
+                <p>神经网络交互绘图工具，手势生成矢量图形。</p>
             </div>
             <div class="item">
                 <h3>CodeSync</h3>
-                <div class="meta"><a href="#">codesync.dev ↗</a></div>
-                <p>协作代码编辑器，黑客马拉松冠军。</p>
+                <div class="meta"><a href="https://codesync.dev" target="_blank">codesync.dev ↗</a></div>
+                <p>实时协作代码编辑器，黑客马拉松冠军。</p>
             </div>
-        </div>
+        </section>
 
-        <div class="orbit-card" id="card4">
+        <!-- 技术栈（偶数） -->
+        <section class="stair-card">
             <h2>⚡ 技术栈</h2>
-            <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.5rem;">
+            <div class="skill-tags">
                 <span class="skill-tag">TypeScript</span>
                 <span class="skill-tag">React</span>
                 <span class="skill-tag">Vue</span>
@@ -360,72 +332,39 @@
                 <span class="skill-tag">PyTorch</span>
                 <span class="skill-tag">Docker</span>
                 <span class="skill-tag">AWS</span>
+                <span class="skill-tag">LangChain</span>
             </div>
-        </div>
+        </section>
 
-        <div class="orbit-card" id="card5">
+        <!-- 学术发表（奇数） -->
+        <section class="stair-card">
             <h2>📄 学术发表</h2>
             <div class="item">
-                <h3>Self-Critique Prompting</h3>
-                <div class="meta">ACL 2024 · 第一作者</div>
-                <p>提升LLM推理性能。</p>
+                <h3>Self-Critique Prompting for LLM Reasoning</h3>
+                <div class="meta">ACL 2024 · 第一作者 · <a href="https://doi.org/10.1234/example.2024" target="_blank">查看期刊 ↗</a></div>
+                <p>提出自我批判提示框架，提升推理表现。</p>
             </div>
             <div class="item">
-                <h3>Lightweight Attention</h3>
-                <div class="meta">NeurIPS 2023 Workshop</div>
-                <p>移动端友好注意力机制。</p>
+                <h3>Lightweight Attention for Edge Devices</h3>
+                <div class="meta">NeurIPS 2023 Workshop · 合作者</div>
+                <p>移动端友好注意力机制，降低70%内存。</p>
             </div>
-        </div>
-    </div>
-
-    <div class="contact-footer">
-        <a href="mailto:alex.chen@example.com">✉️ alex.chen@example.com</a>
-        <a href="https://alexchen.dev" target="_blank">🌐 alexchen.dev</a>
-        <a href="https://linkedin.com/in/alexchen" target="_blank">💼 LinkedIn</a>
-    </div>
+        </section>
+    </main>
 
     <script>
         (() => {
-            // 桌面端环形定位卡片
-            function positionCards() {
-                if (window.innerWidth <= 900) return; // 移动端保持默认流
-                const container = document.querySelector('.main-container');
-                const core = document.querySelector('.star-core');
-                if (!container || !core) return;
-
-                const containerRect = container.getBoundingClientRect();
-                const centerX = containerRect.width / 2;
-                const centerY = containerRect.height / 2;
-
-                const cards = document.querySelectorAll('.orbit-card');
-                const radius = 280; // 轨道半径
-
-                cards.forEach((card, index) => {
-                    const angle = (index / cards.length) * 2 * Math.PI - Math.PI/2; // 从顶部开始
-                    const x = centerX + radius * Math.cos(angle) - card.offsetWidth / 2;
-                    const y = centerY + radius * Math.sin(angle) - card.offsetHeight / 2;
-                    card.style.left = x + 'px';
-                    card.style.top = y + 'px';
-                });
-            }
-
-            window.addEventListener('resize', positionCards);
-            window.addEventListener('load', positionCards);
-            // 初始调用延迟确保布局完成
-            setTimeout(positionCards, 100);
-
-            // 粒子背景（星轨风格）
             const canvas = document.getElementById('particle-canvas');
             const ctx = canvas.getContext('2d');
             let width, height;
             let particles = [];
-            const mouse = { x: null, y: null, radius: 70 };
+            const mouse = { x: null, y: null, radius: 80 };
 
             const colors = [
-                'rgba(107,136,198,0.7)',  // 星蓝
-                'rgba(243,162,97,0.6)',   // 流光橙
-                'rgba(180,190,210,0.5)',
-                'rgba(200,180,160,0.4)'
+                'rgba(243,208,127,0.4)',
+                'rgba(216,214,209,0.4)',
+                'rgba(200,190,170,0.35)',
+                'rgba(220,210,180,0.3)'
             ];
 
             class Particle {
@@ -433,8 +372,8 @@
                     this.x = x || Math.random() * width;
                     this.y = y || Math.random() * height;
                     this.size = Math.random() * 2 + 0.5;
-                    this.speedX = (Math.random() - 0.5) * 0.4;
-                    this.speedY = (Math.random() - 0.5) * 0.4;
+                    this.speedX = (Math.random() - 0.5) * 0.5;
+                    this.speedY = (Math.random() - 0.5) * 0.5;
                     this.color = colors[Math.floor(Math.random() * colors.length)];
                     this.opacity = Math.random() * 0.5 + 0.2;
                 }
@@ -464,23 +403,11 @@
                     ctx.fillStyle = this.color;
                     ctx.globalAlpha = this.opacity;
                     ctx.fill();
-                    // 偶尔绘制星芒
-                    if (this.size > 1.5 && Math.random() < 0.1) {
-                        ctx.strokeStyle = this.color;
-                        ctx.lineWidth = 0.5;
-                        ctx.globalAlpha = this.opacity * 0.5;
-                        ctx.beginPath();
-                        ctx.moveTo(this.x - 4, this.y);
-                        ctx.lineTo(this.x + 4, this.y);
-                        ctx.moveTo(this.x, this.y - 4);
-                        ctx.lineTo(this.x, this.y + 4);
-                        ctx.stroke();
-                    }
                     ctx.globalAlpha = 1;
                 }
             }
 
-            function initParticles(count) {
+            function init(count) {
                 particles = [];
                 for (let i = 0; i < count; i++) particles.push(new Particle());
             }
@@ -494,8 +421,8 @@
                         const dist = Math.sqrt(dx * dx + dy * dy);
                         if (dist < maxDist) {
                             ctx.beginPath();
-                            ctx.strokeStyle = 'rgba(107,136,198,0.08)';
-                            ctx.lineWidth = 0.4 * (1 - dist/maxDist);
+                            ctx.strokeStyle = 'rgba(216,214,209,0.15)';
+                            ctx.lineWidth = 0.5 * (1 - dist/maxDist);
                             ctx.moveTo(particles[a].x, particles[a].y);
                             ctx.lineTo(particles[b].x, particles[b].y);
                             ctx.stroke();
@@ -511,7 +438,7 @@
                 requestAnimationFrame(animate);
             }
 
-            function resizeCanvas() {
+            function resize() {
                 width = window.innerWidth;
                 height = window.innerHeight;
                 canvas.width = width;
@@ -519,9 +446,8 @@
             }
 
             window.addEventListener('resize', () => {
-                resizeCanvas();
-                initParticles(Math.floor(width * height / 16000));
-                positionCards();
+                resize();
+                init(Math.floor(width * height / 18000));
             });
             window.addEventListener('mousemove', e => {
                 mouse.x = e.clientX;
@@ -534,11 +460,10 @@
             }, { passive: true });
             window.addEventListener('touchend', () => { mouse.x = null; mouse.y = null; });
 
-            resizeCanvas();
-            initParticles(Math.floor(width * height / 16000));
+            resize();
+            init(Math.floor(width * height / 18000));
             animate();
         })();
     </script>
 </body>
-</html>
 </html>
