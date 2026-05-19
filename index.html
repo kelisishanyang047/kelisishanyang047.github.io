@@ -2,468 +2,481 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alex Chen · 光影阶梯</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Pinecone · 个人简历 + 作品集 AI 生成平台 | 概念展示</title>
+    <!-- 引入 Naive UI 样式 + Vue 3 + 图标库 + vuedraggable -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/naive-ui@2.38.2/dist/index.iife.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuedraggable@4.1.0/dist/vuedraggable.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css">
+    <!-- 自定义字体 & 基础样式 -->
     <style>
-        :root {
-            --bg-page: #fefbf5;
-            --card-bg: #f4f2ed;
-            --text-primary: #383a40;
-            --text-secondary: #5e6068;
-            --accent-yellow: #f3d07f;
-            --line-color: #d8d6d1;
-            --shadow-card: 0 2px 8px rgba(0,0,0,0.04);
-            --shadow-hover: 0 8px 24px rgba(0,0,0,0.06);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: var(--bg-page);
-            color: var(--text-primary);
-            line-height: 1.6;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            position: relative;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            background: #f5f7fb;
         }
-
-        /* 粒子背景 */
-        #particle-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-            opacity: 0.4;
+        /* 品牌色变量 & 全局滚动条 */
+        :root {
+            --pine-primary: #2C5F2D;
+            --pine-primary-light: #3e7e3f;
+            --pine-accent: #E7A922;
+            --pine-bg-light: #ffffff;
+            --pine-bg-dark: #1a1a2e;
+            --gray-soft: #f8f9fc;
+            --border-light: #e9ecef;
         }
-
-        /* 顶部固定导航（个人信息） */
-        .top-bar {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            background: rgba(254, 251, 245, 0.8);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--line-color);
-            padding: 1rem 2rem;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-        }
-
-        .top-bar .info {
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .top-bar h1 {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            letter-spacing: -0.3px;
-        }
-
-        .top-bar .subtitle {
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-            border-left: 2px solid var(--accent-yellow);
-            padding-left: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .top-bar .contact-mini {
-            display: flex;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        .top-bar .contact-mini a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.3s;
-            border-bottom: 1px solid transparent;
-        }
-        .top-bar .contact-mini a:hover {
-            color: var(--accent-yellow);
-            border-bottom-color: var(--accent-yellow);
-        }
-
-        /* 主体阶梯区域 */
-        .main-stairs {
-            position: relative;
-            z-index: 1;
-            flex: 1;
-            width: 100%;
-            max-width: 1000px;
+        /* 自定义 Naive UI 主题覆盖 (通过 CSS 变量生效部分) */
+        .demo-container {
+            max-width: 1440px;
             margin: 0 auto;
-            padding: 2rem 1.5rem 4rem;
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
+            padding: 24px 32px;
         }
-
-        /* 阶梯卡片 */
-        .stair-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 2rem 2.5rem;
-            width: 80%;
-            box-shadow: var(--shadow-card);
-            transition: transform 0.25s, box-shadow 0.3s;
-            position: relative;
+        /* 拖拽占位符样式 */
+        .ghost {
+            opacity: 0.4;
+            background: #e2e8f0;
+            border: 2px dashed var(--pine-primary);
+            border-radius: 16px;
+            box-shadow: none;
         }
-
-        /* 奇数卡片左对齐，偶数右对齐 */
-        .stair-card:nth-child(odd) {
-            align-self: flex-start;
-            border-left: 4px solid var(--accent-yellow);
+        .sortable-drag {
+            opacity: 0.8;
+            transform: rotate(0.5deg);
+            transition: transform 0.1s;
         }
-
-        .stair-card:nth-child(even) {
-            align-self: flex-end;
-            border-right: 4px solid var(--accent-yellow);
-        }
-
-        .stair-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-hover), 0 0 20px rgba(243, 208, 127, 0.2);
-        }
-
-        .stair-card h2 {
-            font-size: 1.5rem;
-            font-weight: 650;
-            color: var(--text-primary);
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            border-bottom: 1px solid var(--line-color);
-            padding-bottom: 0.5rem;
-        }
-
-        .item {
-            margin-bottom: 1.2rem;
-            padding-left: 1rem;
-            border-left: 2px solid transparent;
-            transition: border-color 0.3s;
-        }
-        .item:hover { border-left-color: var(--accent-yellow); }
-        .item:last-child { margin-bottom: 0; }
-
-        .item h3 {
-            font-size: 1.15rem;
-            color: var(--text-primary);
-            margin-bottom: 0.2rem;
-        }
-
-        .item .meta {
-            font-size: 0.88rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-            font-style: italic;
-        }
-
-        .item p, .item ul {
-            color: #4a4d55;
-            line-height: 1.7;
-        }
-
-        ul { list-style: none; padding-left: 0; }
-        ul li::before {
-            content: '▹';
-            color: var(--accent-yellow);
-            margin-right: 0.5rem;
-        }
-
-        a {
-            color: #b69b4e;
-            text-decoration: none;
-            font-weight: 500;
-            border-bottom: 1px solid transparent;
-            transition: border-color 0.3s, color 0.3s;
-        }
-        a:hover {
-            color: #8b7535;
-            border-bottom-color: var(--accent-yellow);
-        }
-
-        /* 技能标签 */
-        .skill-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.6rem;
-            margin-top: 0.5rem;
-        }
-
-        .skill-tag {
-            background: rgba(243, 208, 127, 0.15);
-            border: 1px solid rgba(243, 208, 127, 0.5);
-            color: #7d6b3a;
-            padding: 0.25rem 1.1rem;
+        /* 模块卡片自定义 */
+        .module-card {
+            background: white;
             border-radius: 20px;
-            font-size: 0.85rem;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            border: 1px solid var(--border-light);
+            transition: all 0.2s;
+        }
+        .module-card:hover {
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            border-color: #d4d8e2;
+        }
+        .card-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .card-actions button {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #5b6e8c;
+            transition: all 0.1s;
+            padding: 4px;
+            border-radius: 8px;
+        }
+        .card-actions button:hover {
+            background: #f1f5f9;
+            transform: scale(1.05);
+            color: var(--pine-primary);
+        }
+        /* AI 润色按钮光效 */
+        .ai-polish-btn {
+            background: linear-gradient(135deg, #e9f7e9 0%, #d4ecd5 100%);
+            border: none;
+            color: #2c5f2d;
             font-weight: 500;
-            transition: 0.2s;
+            border-radius: 40px;
+            padding: 6px 16px;
+            font-size: 13px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s;
         }
-        .skill-tag:hover {
-            background: var(--accent-yellow);
-            color: #fff;
-            border-color: var(--accent-yellow);
-            transform: translateY(-1px);
+        .ai-polish-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 80%);
+            opacity: 0;
+            pointer-events: none;
         }
-
-        /* 响应式 */
-        @media (max-width: 768px) {
-            .top-bar {
-                padding: 1rem;
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .top-bar .info {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-            .top-bar .subtitle {
-                border-left: none;
-                padding-left: 0;
-            }
-            .main-stairs {
-                padding: 1.5rem 1rem;
-                gap: 1.5rem;
-            }
-            .stair-card {
-                width: 100%;
-                align-self: stretch !important;
-                border-left: 4px solid var(--accent-yellow) !important;
-                border-right: none !important;
-            }
+        .ai-polish-btn:hover::after {
+            opacity: 0.5;
+            animation: sweep 0.8s ease-out;
+        }
+        @keyframes sweep {
+            0% { transform: translateX(-100%) rotate(25deg); }
+            100% { transform: translateX(100%) rotate(25deg); }
+        }
+        /* 风格画廊卡片 */
+        .style-card {
+            border-radius: 20px;
+            overflow: hidden;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        }
+        .style-card.active {
+            border-color: var(--pine-primary);
+            box-shadow: 0 12px 24px rgba(44,95,45,0.12);
+        }
+        .style-preview {
+            width: 100%;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+            background: #eceff5;
+        }
+        /* 瀑布流演示 */
+        .portfolio-mock {
+            column-count: 3;
+            column-gap: 18px;
+        }
+        .mock-work {
+            break-inside: avoid;
+            margin-bottom: 18px;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        /* 暗色主题模拟（用于个人主页预览区） */
+        .dark-preview {
+            background: #1a1a2e;
+            color: #e2e2e6;
+        }
+        .dark-preview .stat-item {
+            color: #cbd5e1;
+        }
+        /* 空状态插画占位 */
+        .empty-illustration {
+            width: 100px;
+            opacity: 0.7;
+        }
+        /* 布局响应 */
+        @media (max-width: 1000px) {
+            .demo-container { padding: 16px; }
+            .portfolio-mock { column-count: 2; }
         }
     </style>
 </head>
 <body>
-    <canvas id="particle-canvas"></canvas>
+<div id="app">
+    <n-config-provider :theme-overrides="themeOverrides">
+        <n-global-style />
+        <div class="demo-container">
+            <!-- 头部品牌 -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 42px; height: 42px; background: #2C5F2D; border-radius: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 12px rgba(44,95,45,0.2);">
+                        <span style="color: #E7A922; font-size: 26px; font-weight: 700;">🌰</span>
+                    </div>
+                    <h1 style="font-size: 26px; font-weight: 700; letter-spacing: -0.3px; background: linear-gradient(135deg, #2C5F2D, #E7A922); -webkit-background-clip: text; background-clip: text; color: transparent;">Pinecone</h1>
+                    <span style="background: #eef2ff; padding: 4px 12px; border-radius: 40px; font-size: 13px; font-weight: 500;">概念演示 · UI优化</span>
+                </div>
+                <n-button quaternary @click="toggleDarkDemo" style="border-radius: 40px;">🌓 预览暗色模式</n-button>
+            </div>
 
-    <!-- 顶部固定条 -->
-    <header class="top-bar">
-        <div class="info">
-            <h1>Alex Chen</h1>
-            <span class="subtitle">全栈开发 & AI 研究员</span>
+            <!-- 核心编辑器区域 (左中右) -->
+            <n-card title="📝 简历编辑器 (核心体验)" :bordered="false" style="margin-bottom: 40px; border-radius: 28px;">
+                <div style="display: flex; gap: 24px; flex-wrap: wrap;">
+                    <!-- 左侧模块库 -->
+                    <div style="flex: 1.2; min-width: 180px; background: #fafcff; border-radius: 24px; padding: 16px;">
+                        <div style="font-weight: 600; margin-bottom: 16px;">📦 模块库</div>
+                        <div v-for="mod in availableModules" :key="mod.type" draggable="true" @dragstart="dragStart(mod)" style="padding: 12px; background: white; border-radius: 16px; margin-bottom: 12px; border: 1px solid #eef2f6; cursor: grab; transition: 0.1s;">
+                            <div style="display: flex; gap: 8px;"><span>{{ mod.icon }}</span> <strong>{{ mod.name }}</strong></div>
+                            <div style="font-size: 12px; color: #6c7a91;">拖拽添加</div>
+                        </div>
+                    </div>
+
+                    <!-- 中间拖拽列表 -->
+                    <div style="flex: 2.5; min-width: 280px;">
+                        <div style="font-weight: 600; margin-bottom: 12px;">✨ 我的简历模块 (拖拽排序)</div>
+                        <draggable v-model="resumeModules" group="modules" ghost-class="ghost" drag-class="sortable-drag" item-key="id" handle=".drag-handle">
+                            <template #item="{ element, index }">
+                                <div class="module-card">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div style="display: flex; gap: 10px; align-items: center;">
+                                            <span class="drag-handle" style="cursor: grab; font-size: 20px;">⋮⋮</span>
+                                            <span style="font-weight: 600;">{{ element.icon }} {{ element.title }}</span>
+                                        </div>
+                                        <div class="card-actions">
+                                            <button @click="moveUp(index)" title="上移">⬆️</button>
+                                            <button @click="moveDown(index)" title="下移">⬇️</button>
+                                            <button @click="deleteModule(index)" title="删除">🗑️</button>
+                                            <button @click="openEditDrawer(element)" title="编辑">✏️</button>
+                                            <button class="ai-polish-btn" @click="simulatePolish(element)">✨ AI润色</button>
+                                        </div>
+                                    </div>
+                                    <div style="margin-top: 12px; font-size: 14px; color: #3c4a62;">{{ element.summary }}</div>
+                                </div>
+                            </template>
+                        </draggable>
+                        <n-empty v-if="resumeModules.length === 0" description="从左侧拖拽模块开始制作简历" style="margin-top: 40px;">
+                            <template #icon><span style="font-size: 48px;">📄</span></template>
+                        </n-empty>
+                    </div>
+
+                    <!-- 右侧编辑抽屉模拟 (点击编辑触发) -->
+                    <div style="flex: 1.2; min-width: 220px; background: #f9fbfe; border-radius: 24px; padding: 16px;">
+                        <div style="font-weight: 600;">📋 模块详情</div>
+                        <div v-if="editingModule" style="margin-top: 16px;">
+                            <n-input v-model:value="editingModule.summary" type="textarea" rows="4" placeholder="编辑内容..." />
+                            <n-button type="primary" size="small" style="margin-top: 12px;" @click="saveEdit">保存修改</n-button>
+                        </div>
+                        <div v-else style="margin-top: 32px; text-align: center; color: #9aa4bf;">点击✏️编辑模块内容</div>
+                    </div>
+                </div>
+            </n-card>
+
+            <!-- 风格选择页面 (画廊 + AI自定义) -->
+            <n-card title="🎨 风格画廊 · 一键换装" :bordered="false" style="margin-bottom: 40px; border-radius: 28px;">
+                <n-grid :cols="5" :x-gap="16" :y-gap="24" responsive="screen" :collapsed="false">
+                    <n-grid-item v-for="style in presetStyles" :key="style.id">
+                        <div class="style-card" :class="{ active: currentStyle === style.id }" @click="applyStyle(style.id)">
+                            <img :src="style.previewUrl" class="style-preview" alt="预览">
+                            <div style="padding: 12px; text-align: center;">
+                                <div style="font-weight: 600;">{{ style.name }}</div>
+                                <div v-if="currentStyle === style.id" style="color: #2C5F2D; font-size: 12px;">✓ 使用中</div>
+                            </div>
+                        </div>
+                    </n-grid-item>
+                </n-grid>
+                <n-divider>✨ AI 自定义风格</n-divider>
+                <div style="display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-end;">
+                    <n-input v-model:value="customPrompt" placeholder="例如：杂志风，大字标题，留白多" style="flex: 2;" />
+                    <n-button :loading="genLoading" type="primary" @click="generateCustom" style="border-radius: 40px;">✨ 生成风格样板</n-button>
+                </div>
+                <div v-if="customSamples.length" style="margin-top: 24px; display: flex; gap: 20px;">
+                    <div v-for="(sample, idx) in customSamples" :key="idx" style="background: white; border-radius: 20px; padding: 12px; width: 200px; text-align: center;">
+                        <div style="height: 120px; background: #2C5F2D; border-radius: 16px; display: flex; align-items: center; justify-content: center; color: white;">{{ sample.previewText }}</div>
+                        <n-button size="small" style="margin-top: 12px;" @click="applyCustomSample(sample)">应用此风格</n-button>
+                    </div>
+                </div>
+                <n-alert type="info" style="margin-top: 16px;">✨ 风格实时应用到预览区? 下方个人主页模拟区会同步风格主题</n-alert>
+            </n-card>
+
+            <!-- 发布与分享区域 -->
+            <n-card title="🚀 发布 & 分享" :bordered="false" style="margin-bottom: 40px; border-radius: 28px;">
+                <div v-if="!publishSuccessFlag">
+                    <n-button type="success" size="large" @click="publishSite" :loading="publishing">一键发布个人主页</n-button>
+                    <p style="margin-top: 12px; color: #6c7a91;">发布后将生成专属链接+二维码，轻松分享</p>
+                </div>
+                <div v-else class="publish-success">
+                    <n-result status="success" title="发布成功！" description="您的个人主页已上线，专属链接永久有效">
+                        <template #footer>
+                            <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+                                <div><n-qrcode :value="pageUrl" :size="120" /></div>
+                                <div><n-input-group><n-input :value="pageUrl" readonly style="width: 260px;" /><n-button type="primary" @click="copyLink">复制链接</n-button></n-input-group>
+                                <n-button type="success" @click="viewHomePageMock">🔗 去查看个人主页 (模拟)</n-button>
+                            </div>
+                        </template>
+                    </n-result>
+                    <n-button style="margin-top: 16px;" quaternary @click="publishSuccessFlag=false">重新发布</n-button>
+                </div>
+                <div v-if="publishError" style="margin-top: 16px;">
+                    <n-alert type="error" title="发布失败" :description="errorMsg" closable @close="publishError=false" />
+                </div>
+            </n-card>
+
+            <!-- 个人主页模拟 (展示简历/作品集) 亮暗色切换动态 -->
+            <n-card title="🏠 我的个人主页 · 真实预览 (含作品集瀑布流)" :bordered="false" style="border-radius: 28px; overflow: hidden;" :class="{'dark-preview': darkPreviewActive}">
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-bottom: 16px;">
+                    <n-switch v-model:value="darkPreviewActive" size="large">
+                        <template #checked>🌙 暗色</template>
+                        <template #unchecked>☀️ 亮色</template>
+                    </n-switch>
+                </div>
+                <!-- 个人主页头部 -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                    <div><h2 style="margin:0;">林小溪 · 产品设计师</h2><p>✨ 作品集 + 简历</p></div>
+                    <div style="display: flex; gap: 24px;">
+                        <div class="stat-item"><span>👁️ 1,284次浏览</span></div>
+                        <div class="stat-item"><span>❤️ 89 点赞</span></div>
+                        <n-button ghost type="primary" size="small">📧 联系我</n-button>
+                    </div>
+                </div>
+                <!-- 作品集瀑布流 + 灯箱模拟 -->
+                <div style="margin-top: 28px;">
+                    <h3>📸 精选作品集</h3>
+                    <div class="portfolio-mock">
+                        <div v-for="item in portfolioItems" :key="item.id" class="mock-work" @click="openLightbox(item)">
+                            <img v-if="item.type==='image'" :src="item.thumb" style="width:100%; display:block;" loading="lazy">
+                            <div v-else style="background:#000; color:white; padding: 40px 12px; text-align:center;">🎬 视频演示</div>
+                            <div style="padding: 8px;">{{ item.title }}</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 简历信息模拟 -->
+                <n-divider>教育背景</n-divider>
+                <div>清华大学 · 设计学硕士 (2024届) —— AI 产品方向</div>
+                <div style="margin-top: 12px; font-size: 14px; color: #6c7a91;">✨ 使用AI润色后描述更具吸引力</div>
+            </n-card>
         </div>
-        <div class="contact-mini">
-            <a href="mailto:alex.chen@example.com">✉️ alex.chen@example.com</a>
-            <a href="https://alexchen.dev" target="_blank">🌐 alexchen.dev</a>
-            <a href="https://linkedin.com/in/alexchen" target="_blank">💼 LinkedIn</a>
-        </div>
-    </header>
 
-    <!-- 阶梯卡片区 -->
-    <main class="main-stairs">
-        <!-- 教育经历（奇数，左对齐） -->
-        <section class="stair-card">
-            <h2>📚 教育经历</h2>
-            <div class="item">
-                <h3>计算机科学 硕士</h3>
-                <div class="meta">城市科技大学 · 2022 - 2025</div>
-                <p>大语言模型对齐与可解释性，GPA 3.9/4.0，优秀毕业论文。</p>
+        <!-- 全局模拟 lightbox Modal -->
+        <n-modal v-model:show="lightboxVisible" preset="card" style="width: 600px;" title="作品预览">
+            <div v-if="selectedWork">
+                <img v-if="selectedWork.type==='image'" :src="selectedWork.thumb" style="width:100%; border-radius: 16px;">
+                <div v-else style="padding: 60px; text-align:center;">🎬 视频播放器演示区</div>
             </div>
-            <div class="item">
-                <h3>软件工程 学士</h3>
-                <div class="meta">国立信息大学 · 2018 - 2022</div>
-                <p>核心课程：数据结构、算法设计，毕业设计获最佳创新奖。</p>
-            </div>
-        </section>
+        </n-modal>
 
-        <!-- 工作经历（偶数，右对齐） -->
-        <section class="stair-card">
-            <h2>💼 工作经历</h2>
-            <div class="item">
-                <h3>前端架构师 · 星河科技</h3>
-                <div class="meta">2023.06 - 至今</div>
-                <ul>
-                    <li>主导低代码平台前端架构，服务10万+开发者</li>
-                    <li>首屏加载性能优化40%，引入 WebAssembly</li>
-                </ul>
-            </div>
-            <div class="item">
-                <h3>实习生 · 未来智能</h3>
-                <div class="meta">2022.07 - 2023.04</div>
-                <ul>
-                    <li>AI对话系统前端开发，实现流式响应</li>
-                    <li>Vue3组件库，测试覆盖率85%</li>
-                </ul>
-            </div>
-        </section>
+        <!-- 空状态提示消息 (演示用) -->
+        <n-message-provider />
+    </n-config-provider>
+</div>
 
-        <!-- 精选项目（奇数） -->
-        <section class="stair-card">
-            <h2>🚀 精选项目</h2>
-            <div class="item">
-                <h3>Neural Canvas</h3>
-                <div class="meta"><a href="https://github.com/example/neural-canvas" target="_blank">GitHub ↗</a> · ⭐ 2.3k</div>
-                <p>神经网络交互绘图工具，手势生成矢量图形。</p>
-            </div>
-            <div class="item">
-                <h3>CodeSync</h3>
-                <div class="meta"><a href="https://codesync.dev" target="_blank">codesync.dev ↗</a></div>
-                <p>实时协作代码编辑器，黑客马拉松冠军。</p>
-            </div>
-        </section>
-
-        <!-- 技术栈（偶数） -->
-        <section class="stair-card">
-            <h2>⚡ 技术栈</h2>
-            <div class="skill-tags">
-                <span class="skill-tag">TypeScript</span>
-                <span class="skill-tag">React</span>
-                <span class="skill-tag">Vue</span>
-                <span class="skill-tag">Node.js</span>
-                <span class="skill-tag">Python</span>
-                <span class="skill-tag">PyTorch</span>
-                <span class="skill-tag">Docker</span>
-                <span class="skill-tag">AWS</span>
-                <span class="skill-tag">LangChain</span>
-            </div>
-        </section>
-
-        <!-- 学术发表（奇数） -->
-        <section class="stair-card">
-            <h2>📄 学术发表</h2>
-            <div class="item">
-                <h3>Self-Critique Prompting for LLM Reasoning</h3>
-                <div class="meta">ACL 2024 · 第一作者 · <a href="https://doi.org/10.1234/example.2024" target="_blank">查看期刊 ↗</a></div>
-                <p>提出自我批判提示框架，提升推理表现。</p>
-            </div>
-            <div class="item">
-                <h3>Lightweight Attention for Edge Devices</h3>
-                <div class="meta">NeurIPS 2023 Workshop · 合作者</div>
-                <p>移动端友好注意力机制，降低70%内存。</p>
-            </div>
-        </section>
-    </main>
-
-    <script>
-        (() => {
-            const canvas = document.getElementById('particle-canvas');
-            const ctx = canvas.getContext('2d');
-            let width, height;
-            let particles = [];
-            const mouse = { x: null, y: null, radius: 80 };
-
-            const colors = [
-                'rgba(243,208,127,0.4)',
-                'rgba(216,214,209,0.4)',
-                'rgba(200,190,170,0.35)',
-                'rgba(220,210,180,0.3)'
-            ];
-
-            class Particle {
-                constructor(x, y) {
-                    this.x = x || Math.random() * width;
-                    this.y = y || Math.random() * height;
-                    this.size = Math.random() * 2 + 0.5;
-                    this.speedX = (Math.random() - 0.5) * 0.5;
-                    this.speedY = (Math.random() - 0.5) * 0.5;
-                    this.color = colors[Math.floor(Math.random() * colors.length)];
-                    this.opacity = Math.random() * 0.5 + 0.2;
-                }
-                update() {
-                    if (mouse.x && mouse.y) {
-                        const dx = mouse.x - this.x;
-                        const dy = mouse.y - this.y;
-                        const dist = Math.sqrt(dx * dx + dy * dy);
-                        if (dist < mouse.radius) {
-                            const force = (mouse.radius - dist) / mouse.radius;
-                            this.speedX += dx * force * 0.001;
-                            this.speedY += dy * force * 0.001;
-                        }
+<script>
+    const { createApp, ref, reactive, onMounted } = Vue;
+    const naive = naiveUi;
+    const app = createApp({
+        setup() {
+            // 主题变量覆盖
+            const themeOverrides = {
+                common: { primaryColor: '#2C5F2D', primaryColorHover: '#3e7e3f', warningColor: '#E7A922' }
+            };
+            // 可用模块库
+            const availableModules = ref([
+                { type: 'work', name: '工作经历', icon: '💼', summary: '曾任职于顶尖设计工作室，主导多个AI项目' },
+                { type: 'edu', name: '教育背景', icon: '🎓', summary: '清华大学设计学硕士，GPA 3.9/4.0' },
+                { type: 'skill', name: '专业技能', icon: '⚙️', summary: 'Figma, AI工具, 产品策略' },
+                { type: 'cert', name: '证书荣誉', icon: '🏅', summary: '红点设计奖，Google UX证书' }
+            ]);
+            // 用户简历模块
+            const resumeModules = ref([
+                { id: '1', title: '工作经历', icon: '💼', summary: '资深UI/UX 设计师 · 某AI公司 2022-至今\n负责简历生成工具设计' },
+                { id: '2', title: '教育背景', icon: '🎓', summary: '浙江大学 数字媒体 学士' },
+                { id: '3', title: '核心技能', icon: '⚙️', summary: 'Figma / AI 提示工程 / 用户研究' }
+            ]);
+            const editingModule = ref(null);
+            const openEditDrawer = (mod) => { editingModule.value = mod; };
+            const saveEdit = () => { editingModule.value = null; window.$message?.success('修改已保存'); };
+            const moveUp = (idx) => { if(idx>0) [resumeModules.value[idx-1], resumeModules.value[idx]] = [resumeModules.value[idx], resumeModules.value[idx-1]]; };
+            const moveDown = (idx) => { if(idx<resumeModules.value.length-1) [resumeModules.value[idx+1], resumeModules.value[idx]] = [resumeModules.value[idx], resumeModules.value[idx+1]]; };
+            const deleteModule = (idx) => { resumeModules.value.splice(idx,1); };
+            const simulatePolish = (mod) => { mod.summary = '✨ AI优化: '+ mod.summary + ' 更具专业亮点，数据驱动成果展示。'; window.$message?.success('AI润色完成，内容已升级'); };
+            const dragStart = (mod) => { /* 简单拖拽添加逻辑 使用原生事件需完善，借助draggable组件已支持组内，外部添加另写 */ };
+            // 由于vuedraggable已允许跨组，但为了左侧到右侧添加，这里监听end:简单实现自动添加?
+            // 简便：利用vuedraggable group属性，但左侧没使用draggable组件容器？我们让左侧也可drag，但需要在右侧数组push? 更好体验：监听drop
+            // 为了让演示更完整: 给左边加上draggable属性，在右侧容器监听添加逻辑
+            // 简易做法: 监听document dragover preventDefault
+            // 在mounted中处理左侧拖拽添加逻辑
+            onMounted(() => {
+                document.body.addEventListener('dragover', (e) => e.preventDefault());
+                document.body.addEventListener('drop', (e) => {
+                    const target = e.target.closest('.drag-list-area');
+                    if(target && window._dragModule) {
+                        const newMod = { id: Date.now()+Math.random(), title: window._dragModule.name, icon: window._dragModule.icon, summary: window._dragModule.summary };
+                        resumeModules.value.push(newMod);
+                        window._dragModule = null;
+                        window.$message?.success('模块已添加');
                     }
-                    this.x += this.speedX;
-                    this.y += this.speedY;
-                    this.speedX *= 0.999;
-                    this.speedY *= 0.999;
-                    if (this.x < 0 || this.x > width) this.speedX *= -0.5;
-                    if (this.y < 0 || this.y > height) this.speedY *= -0.5;
-                    this.x = Math.max(0, Math.min(width, this.x));
-                    this.y = Math.max(0, Math.min(height, this.y));
-                }
-                draw() {
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fillStyle = this.color;
-                    ctx.globalAlpha = this.opacity;
-                    ctx.fill();
-                    ctx.globalAlpha = 1;
-                }
-            }
-
-            function init(count) {
-                particles = [];
-                for (let i = 0; i < count; i++) particles.push(new Particle());
-            }
-
-            function connect() {
-                const maxDist = 90;
-                for (let a = 0; a < particles.length; a++) {
-                    for (let b = a + 1; b < particles.length; b++) {
-                        const dx = particles[a].x - particles[b].x;
-                        const dy = particles[a].y - particles[b].y;
-                        const dist = Math.sqrt(dx * dx + dy * dy);
-                        if (dist < maxDist) {
-                            ctx.beginPath();
-                            ctx.strokeStyle = 'rgba(216,214,209,0.15)';
-                            ctx.lineWidth = 0.5 * (1 - dist/maxDist);
-                            ctx.moveTo(particles[a].x, particles[a].y);
-                            ctx.lineTo(particles[b].x, particles[b].y);
-                            ctx.stroke();
-                        }
+                });
+            });
+            const dragStartLeft = (mod) => { window._dragModule = mod; };
+            // 挂载全局方法
+            window.dragStartLeft = dragStartLeft;
+            
+            // 风格部分
+            const presetStyles = ref([
+                { id: 'modern', name: '简约现代', previewUrl: 'https://picsum.photos/id/20/300/200' },
+                { id: 'dark', name: '科技暗黑', previewUrl: 'https://picsum.photos/id/0/300/200' },
+                { id: 'nature', name: '清新自然', previewUrl: 'https://picsum.photos/id/29/300/200' },
+                { id: 'elegant', name: '优雅杂志', previewUrl: 'https://picsum.photos/id/26/300/200' },
+                { id: 'bold', name: '活力撞色', previewUrl: 'https://picsum.photos/id/100/300/200' }
+            ]);
+            const currentStyle = ref('modern');
+            const applyStyle = (id) => { currentStyle.value = id; window.$message?.success(`已应用「${presetStyles.value.find(s=>s.id===id).name}」风格`); };
+            const customPrompt = ref('');
+            const genLoading = ref(false);
+            const customSamples = ref([]);
+            const generateCustom = () => {
+                if(!customPrompt.value) { window.$message?.warning('请输入风格描述'); return; }
+                genLoading.value = true;
+                setTimeout(() => {
+                    customSamples.value = [{ previewText: customPrompt.value.slice(0,12)+'风格', styleName: 'AI定制' }, { previewText: '活力·'+customPrompt.value.slice(0,8), styleName: '变体' }];
+                    genLoading.value = false;
+                    window.$message?.success('AI生成了两个预览样本');
+                }, 1000);
+            };
+            const applyCustomSample = (sample) => { window.$message?.info(`应用自定义风格: ${sample.previewText}`); currentStyle.value = 'custom'; };
+            
+            // 发布与分享逻辑
+            const publishSuccessFlag = ref(false);
+            const publishing = ref(false);
+            const pageUrl = ref('https://pinecone.show/u/linxiaoxi');
+            const publishError = ref(false);
+            const errorMsg = ref('');
+            const publishSite = () => {
+                publishing.value = true;
+                setTimeout(() => {
+                    if(Math.random() > 0.1) {
+                        publishSuccessFlag.value = true;
+                        publishing.value = false;
+                        window.$message?.success('发布成功！快去分享吧');
+                    } else {
+                        publishError.value = true;
+                        errorMsg.value = '网络波动，请检查后重试';
+                        publishing.value = false;
                     }
-                }
+                }, 1200);
+            };
+            const copyLink = () => { navigator.clipboard.writeText(pageUrl.value); window.$message?.success('链接已复制'); };
+            const viewHomePageMock = () => { window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); window.$message?.info('已滚动至个人主页预览区'); };
+            
+            // 个人主页暗色模拟
+            const darkPreviewActive = ref(false);
+            const toggleDarkDemo = () => { darkPreviewActive.value = !darkPreviewActive.value; };
+            
+            // 作品集数据
+            const portfolioItems = ref([
+                { id: 1, type: 'image', title: 'AI简历生成器UI设计', thumb: 'https://picsum.photos/id/30/400/300' },
+                { id: 2, type: 'image', title: '品牌视觉系统', thumb: 'https://picsum.photos/id/42/400/300' },
+                { id: 3, type: 'video', title: '产品演示视频', thumb: '' },
+                { id: 4, type: 'image', title: '移动端交互概念', thumb: 'https://picsum.photos/id/15/400/300' }
+            ]);
+            const lightboxVisible = ref(false);
+            const selectedWork = ref(null);
+            const openLightbox = (work) => { selectedWork.value = work; lightboxVisible.value = true; };
+            
+            // 初始消息API挂载
+            setTimeout(() => {
+                if(window.$message === undefined) {
+                    const message = naive.createMessage({});
+                    window.$message = message;
+                } else window.$message?.success('欢迎体验 Pinecone 概念版 ✨ 支持拖拽排序/AI润色预览');
+            }, 100);
+            
+            return {
+                themeOverrides, availableModules, resumeModules, editingModule, openEditDrawer, saveEdit, moveUp, moveDown, deleteModule, simulatePolish, dragStart: dragStartLeft,
+                presetStyles, currentStyle, applyStyle, customPrompt, genLoading, customSamples, generateCustom, applyCustomSample,
+                publishSuccessFlag, publishing, pageUrl, publishError, errorMsg, publishSite, copyLink, viewHomePageMock,
+                darkPreviewActive, toggleDarkDemo, portfolioItems, lightboxVisible, selectedWork, openLightbox
+            };
+        },
+        mounted() {
+            // 消息实例确保
+            if(!window.$message) {
+                const message = naive.createMessage({});
+                window.$message = message;
             }
-
-            function animate() {
-                ctx.clearRect(0, 0, width, height);
-                for (let p of particles) { p.update(); p.draw(); }
-                connect();
-                requestAnimationFrame(animate);
-            }
-
-            function resize() {
-                width = window.innerWidth;
-                height = window.innerHeight;
-                canvas.width = width;
-                canvas.height = height;
-            }
-
-            window.addEventListener('resize', () => {
-                resize();
-                init(Math.floor(width * height / 18000));
-            });
-            window.addEventListener('mousemove', e => {
-                mouse.x = e.clientX;
-                mouse.y = e.clientY;
-            });
-            window.addEventListener('mouseout', () => { mouse.x = null; mouse.y = null; });
-            window.addEventListener('touchmove', e => {
-                mouse.x = e.touches[0].clientX;
-                mouse.y = e.touches[0].clientY;
-            }, { passive: true });
-            window.addEventListener('touchend', () => { mouse.x = null; mouse.y = null; });
-
-            resize();
-            init(Math.floor(width * height / 18000));
-            animate();
-        })();
-    </script>
+        }
+    });
+    app.use(naive);
+    app.component('draggable', vuedraggable);
+    app.mount('#app');
+</script>
 </body>
 </html>
